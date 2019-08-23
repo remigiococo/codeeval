@@ -1,0 +1,100 @@
+from sys import argv
+from re import search
+
+# CMYK "(F,F,F,F)"
+# HSL "HSL(D,P,P)"
+# HSV "HSV(D,P,P)"
+# Hex "#000000"
+#
+# D = 0..359 P = 0..100 F = #.##
+
+def hsv_rgb(h, s, v):
+	c = (float(v)/100.0) * (float(s)/100.0)
+	h1 = float(h) / 60.0
+	x = c * ( 1- abs( h1 % 2 - 1 ) )
+	rgb = (0,0,0)
+	if h1 >= 0.0 and h1 < 1.0:
+		rgb = (c, x, 0)
+	elif h1 >= 1.0 and h1 < 2.0:	
+		rgb = (x, c, 0)
+	elif h1 >= 2.0 and h1 < 3.0:	
+		rgb = (0, c, x)
+	elif h1 >= 3.0 and h1 < 4.0:	
+		rgb = (0, x, c)
+	elif h1 >= 4.0 and h1 < 5.0:	
+		rgb = (x, 0, c)
+	elif h1 >= 5.0 and h1 < 6.0:	
+		rgb = (c, 0, x)
+	m = (float(v)/100.0) - c
+	return (rgb[0]+m, rgb[1]+m, rgb[2]+m)
+
+def hsl_rgb(h, s, l):
+	c = (1.0-abs(2.0*(float(l)/100.0)-1.0) ) * (float(s)/100.0)
+	h1 = float(h) / 60.0
+	x = c * ( 1- abs( h1 % 2 - 1 ) )
+	rgb = (0,0,0)
+	if h1 >= 0.0 and h1 < 1.0:
+		rgb = (c, x, 0)
+	elif h1 >= 1.0 and h1 < 2.0:	
+		rgb = (x, c, 0)
+	elif h1 >= 2.0 and h1 < 3.0:	
+		rgb = (0, c, x)
+	elif h1 >= 3.0 and h1 < 4.0:	
+		rgb = (0, x, c)
+	elif h1 >= 4.0 and h1 < 5.0:	
+		rgb = (x, 0, c)
+	elif h1 >= 5.0 and h1 < 6.0:	
+		rgb = (c, 0, x)
+	m = (float(l)/100.0) - c * 0.5
+	return (rgb[0]+m, rgb[1]+m, rgb[2]+m)
+	
+#test_cases = open(sys.argv[1], 'r')
+test_cases = open(argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip(' ')
+	if( len(test) > 0 ):
+		# print test
+		r = 0
+		g = 0
+		b = 0
+		mhsl = search('HSL\(.+\)', test)
+		mhsv = search('HSV\(.+\)', test)
+		mcmyk = search('\(.+\)', test)
+		mhex = search('#.+', test)
+		if mhsl:
+			s = mhsl.group(0)
+			ls = len(s)
+			n = s[4:ls-1].split(',')
+			# print n # debug
+			t = hsl_rgb(int(n[0]), int(n[1]), int(n[2]))
+			r = int( t[0] * 255.0 + 0.5 )
+			g = int( t[1] * 255.0 + 0.5 )
+			b = int( t[2] * 255.0 + 0.5 )
+		elif mhsv:
+			s = mhsv.group(0)
+			ls = len(s)
+			n = s[4:ls-1].split(',')
+			# print n # debug
+			t = hsv_rgb(int(n[0]), int(n[1]), int(n[2]))
+			r = int( t[0] * 255.0 + 0.5 )
+			g = int( t[1] * 255.0 + 0.5 )
+			b = int( t[2] * 255.0 + 0.5 )
+		elif mcmyk:
+			s = mcmyk.group(0)
+			ls = len(s)
+			n = s[1:ls-1].split(',')
+			# print n # debug
+			r1 = (1.0 - float(n[0]))*(1.0 - float(n[3]))
+			g1 = (1.0 - float(n[1]))*(1.0 - float(n[3]))
+			b1 = (1.0 - float(n[2]))*(1.0 - float(n[3]))
+			r = int( r1 * 255.0 + 0.5 )
+			g = int( g1 * 255.0 + 0.5 )
+			b = int( b1 * 255.0 + 0.5 )
+		elif mhex:
+			s = mhex.group(0)
+			r = int(s[1:3],16)
+			g = int(s[3:5],16)
+			b = int(s[5:7],16)
+		# print s # debug
+		print "RGB("+str(r)+","+str(g)+","+str(b)+")"	
+test_cases.close()

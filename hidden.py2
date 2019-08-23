@@ -1,0 +1,25 @@
+import sys
+import string
+import re
+
+mappac = { 'a':'0', 'b':'1', 'c':'2', 'd':'3', 'e':'4', 'f':'5', 'g':'6', 'h':'7', 'i':'8', 'j':'9' }
+def converti(s):
+	r = ''
+	for i in xrange(len(s)):
+		if s[i] in string.digits:
+			r += s[i]
+		else:
+			r += mappac[ s[i] ]
+	return r
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		m = re.findall('[0-9a-j]+', test)
+		st = string.join(m, '')
+		if len(st) > 0:
+			print converti(st)
+		else:
+			print 'NONE'
+test_cases.close()

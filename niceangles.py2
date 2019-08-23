@@ -1,0 +1,14 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		x = float(test)
+		p1 = int(x)
+		x -= p1
+		p2 = int(x*60) % 60
+		p3 = int(x*3600) % 60
+		print str(p1) + "." + '{0:02n}'.format(p2) + "'" + '{0:02n}'.format(p3) + "\""
+test_cases.close()

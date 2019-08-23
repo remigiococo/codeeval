@@ -1,0 +1,41 @@
+import sys
+import string
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split('|')
+		# print s # debug
+		l = int(s[0])
+		kn = ord(s[1].strip())
+		# print l, kn # debug
+		ns = s[2].strip().split(' ')
+		n = [int(x) for x in ns]
+		# print n # debug
+		found = 0
+		for i in xrange(0, len(n)-l):
+			for j in xrange(i+l,len(n)-l):
+				if n[i:i+l] == n[j:j+l]:
+					# print i, j # debug
+					k = kn-n[i+l-1]
+					mtest = [x+k for x in n[i:i+l]]
+					# print mtest # debug
+					allchars = 0
+					for z in xrange(l):
+						if (mtest[z] >= 32) and (mtest[z] < 128):
+							if str(unichr(mtest[z])) in string.ascii_letters:
+								allchars += 1
+					if allchars == l:		
+						m = [x+k for x in n]
+						# print k, m # debug
+						found = 1
+						break
+			if found == 1:
+				break
+		os = ""		
+		for x in m:
+			os += str(unichr(x))
+		print os
+test_cases.close()

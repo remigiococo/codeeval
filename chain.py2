@@ -1,0 +1,51 @@
+import sys
+import string
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = string.rstrip(test)
+	if( len(test) > 0 ):
+		# print test
+		p = test.split(';')
+		a = []
+		b = []
+		lp = len(p)
+		s = -1
+		e = -1
+		for i in xrange(lp):
+			x = p[i].split('-')
+			a.append(x[0])
+			b.append(x[1])
+			if x[0] == 'BEGIN':
+				s = i
+			if x[1] == 'END':
+				e = i
+		#print a, b, s, e # debug	
+		if (s == -1) or (e == -1):
+			print 'BAD'
+		else:
+			stop = False
+			ok = False
+			while stop == False:
+				dst = b[s]
+				del a[s]
+				del b[s]
+				found = False
+				for i in xrange(len(a)):
+					if a[i] == dst:
+						s = i;
+						#print '*** ', s # debug
+						found = True
+						break;
+				if len(a) == 0:
+					if dst == 'END':
+						ok = True
+					stop = True
+				if found == False:
+					stop = True
+			#print '--- ', len(a), s # debug		
+			if ok == True:
+				print 'GOOD'
+			else:
+				print 'BAD'
+test_cases.close()

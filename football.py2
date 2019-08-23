@@ -1,0 +1,33 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split('|')
+		nn = len(s)
+		d = dict()
+		n = 1
+		for x in s:
+			y = x.strip()
+			z = y.split(' ')
+			# print z # debug
+			for zz in z:
+				t = int(zz)
+				if t not in d.keys():
+					d[t] = set([n])
+				else:
+					d[t].add(n)
+			n = n+1
+	for k in d.keys():
+		d[k] = sorted(d[k])
+	#print d # debug
+	oo = ""
+	for x in sorted(d.keys()):
+		oo += str(x) + ":"
+		for y in d[x]:
+			oo += str(y) + ","
+		oo = oo[0:len(oo)-1] + "; "
+	print oo[0:len(oo)-1]	
+test_cases.close()

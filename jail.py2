@@ -1,0 +1,78 @@
+import sys
+import math
+
+debug=0
+
+def interno(poli, p):
+	lp = len(poli)
+	x = float(p[0])
+	y = float(p[1])
+	nc = 0
+	nx = 0
+	for i in xrange(lp):
+		n1 = i
+		n2 = i+1
+		if n2 > lp-1:
+			n2 = 0
+		x1 = float(poli[n1][0])
+		y1 = float(poli[n1][1])
+		if (x==x1) and (y==y1):
+			return True
+		x2 = float(poli[n2][0])
+		y2 = float(poli[n2][1])
+		if (x==x2) and (y==y2):
+			return True
+		dx = x2-x1
+		dy = y2-y1
+		ye = y
+		if ((y==y1) or (y==y2)) and (y1 != y2):
+			ye = y + 0.0001
+		# horiz. ray-casting <--
+		if (x1 != x2) and (y1 != y2): # oblique segment
+			xc = ((ye-y1)*dx/dy)+x1
+			# print "xc---", xc # debug
+			if (xc >= min(x1,x2)) and (xc <= max(x1,x2)):
+				if xc <= x:
+					nc = nc + 1
+					if debug: print "obl"
+		elif (y1 != y2): # vert. segment
+			if (x1 <= x) and (y >= min(y1,y2)) and (y <= max(y1,y2)):
+				if (x == x1): # P on the segment
+					return True
+				nc = nc + 1
+				if debug: print "vert"
+				if (y==y1) or (y==y2):
+					nx = nx + 1
+		else: # horiz. segment
+			if (y == y1):
+				if (x > max(x1, x2)):
+					nc = nc + 2
+					nx = nx + 2
+					if debug: print "horiz"
+				elif (x >= min(x1,x2)) and (x <= max(x1,x2)): # P on the segment
+					return True
+	ntot = nc - (nx/2)
+	if debug: print nc, nx, ntot # debug
+	if ((ntot % 2) == 1):
+		return True
+	return False
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split('|')
+		pts = s[0].strip().split(',')
+		pt = []
+		for x in pts:
+			z = x.strip().split(' ')
+			pt.append( (int(z[0]), int(z[1])) )
+		qs = s[1].strip().split(' ')
+		q = (int(qs[0]), int(qs[1]))
+		# print pts, pt, q # debug
+		if interno(pt, q) == True:
+			print "Prisoner"
+		else:
+			print "Citizen"
+test_cases.close()

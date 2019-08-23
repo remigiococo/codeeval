@@ -1,0 +1,55 @@
+import sys
+
+# C(n,k) = C(n-1,k-1)+C(n-1,k)
+def count_seq(n):
+	c = []
+	c.append([1])
+	# c[0][0] = 1
+	c.append([1,1])
+	# c[1][0] = 1
+	# c[1][1] = 1
+	for j in xrange(2, n+1):
+		c.append([1])
+		#c[j][0] = 1
+		for k in xrange(1, j):
+			c[j].append( c[j-1][k-1]+c[j-1][k] )
+		c[j].append(1)	
+	ret = 0
+	i = 0
+	m = n
+	# print c # debug
+	while i*2 <= n:
+		ret += c[m][i]
+		i += 1
+		m -= 1
+	return ret
+
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	nseq = []
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		i = 0
+		l = 1
+		while i < len(test):
+			sub = test[i:i+2]
+			# print "--", sub # debug
+			if int(sub) > 26:
+				# print "i,l", i, l # debug
+				nseq.append(l)
+				l = 1
+			else:
+				# print "i,l", i, l # debug
+				if i < len(test)-1:
+					l = l+1
+			i += 1
+		nseq.append(l)
+		# print nseq # debug
+		tot = 1
+		for x in nseq:
+			tot *= count_seq(x)
+		print tot	
+test_cases.close()
+

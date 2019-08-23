@@ -1,0 +1,18 @@
+import sys
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		snum = test.split(' ')
+		num = [ int(x) for x in snum ]
+		n = len(num)
+		for i in range(n/2, 1, -1):
+			a = num[n-i:n]
+			b = num[n-2*i:n-i]
+			if a == b:
+				s = ""
+				for j in range ( len(a) ):
+					s += str(a[j])
+					if j < len(a)-1:
+						s += " "
+				print s		
+test_cases.close()

@@ -1,0 +1,24 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		s = test.replace(" ", "")
+		l = len(s)
+		sum = 0
+		j = 1
+		for i in xrange(l-1, -1, -1):
+			x = int(s[i:i+1])
+			if j%2 == 0:
+				x = x*2
+			if x > 9:
+				x = 1 + (x%10)
+			j = j+1
+			sum += x
+		if sum % 10 == 0:
+			print 1
+		else:
+			print 0
+test_cases.close()

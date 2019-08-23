@@ -1,0 +1,83 @@
+import sys
+
+def calc_overlap(a,b):
+	ov = 0
+	la = len(a)
+	lb = len(b)
+	minl = min( la, lb )
+	n1 = n2 = n3 = n4 = -1
+	# aaaxxxxxx - bbbyyy
+	# aaaxxxxxx - yyybbb
+	if a in b:
+		n3 = la
+	if b in a:
+		n4 = lb
+	for i in xrange( minl, 0, -1 ):
+		if a[0:i] == b[lb-i:lb]:
+			n1 = i
+		if a[la-i:la] == b[0:i]:
+			n2 = i
+		#if a[0:i] == b[0:i]:
+		#	n3 = i
+		#if a[la-i:la] == b[lb-i:lb]:
+		#	n4 = i
+		ov = max( n1, n2, n3, n4 )	
+		if ov > 0:
+			break
+	ndx = 0	
+	if ov == n1:
+		ndx = 1
+	elif ov == n2:
+		ndx = 2
+	elif ov == n3:
+		ndx = 3
+	elif ov == n4:
+		ndx = 4
+	if ov == -1:
+		ov = 0
+	return (ov, ndx)
+	
+def merge_str(a, l):
+	if len(l) == 1:
+		return
+	# print "---", l # debug	
+	maxov = 0
+	ms = ""
+	t = 0
+	for x in l:
+		if x == a:
+			continue
+		(n, j) = calc_overlap(a,x)
+		if n > maxov:
+			maxov = n
+			ms = x
+			t = j
+	b = ""
+	if t == 1: # beginning of a overlap with end of x
+		b += ms + a[maxov:]
+	elif t == 2:
+		b += a + ms[maxov:]
+	elif (t == 3) or (t == 4):
+		if len(a) > len(ms):
+			b += a
+		else:
+			b += ms
+	# print maxov, t, a, "|", ms, "|", b # debug	
+	if len(ms) > 0:
+		l.remove(ms)
+	if len(b) > 0:
+		l.append(b)
+	l.remove(a)	
+		
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(';')
+		# print s # debug
+		while len(s) > 1:
+			merge_str(s[0], s)
+		print s[0]	
+test_cases.close()

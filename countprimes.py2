@@ -1,0 +1,36 @@
+import sys
+
+def countprimes(a,b):
+	v = []
+	v.append(2)
+	v.append(3)
+	n = 0
+	if a == 2:
+		n = 2
+	elif a == 3:
+		n = 1
+	i=5
+	while(i<=b):
+		isp=True
+		for x in v:
+			if i % x == 0:
+				isp = False
+				break;
+		if isp:
+			v.append(i)
+			if i >= a:
+				n += 1
+		i += 2
+	return n
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		s = test.split(',')
+		n1 = int(s[0])
+		n2 = int(s[1])
+		# print n1, n2 # debug
+		print countprimes(n1,n2)
+test_cases.close()

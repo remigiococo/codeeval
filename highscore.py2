@@ -1,0 +1,24 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split('|')
+		#print s # debug
+		m=[]
+		for x in s:
+			y = x.strip()
+			s2 = y.split(' ')
+			n = [int(x) for x in s2]
+			if len(m) == 0:
+				m = [x for x in n]
+			else:	
+				for j in xrange(len(m)):
+					m[j] = max(m[j], n[j])
+		oo = ''
+		for i in xrange(len(m)):
+			oo += str(m[i]) + ' '
+		print oo[0:len(oo)-1]	
+test_cases.close()

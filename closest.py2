@@ -1,0 +1,38 @@
+import sys
+import math
+
+def mindist(v):
+	d = 10000.0
+	for i in range( len(v) ):
+		for j in range(i+1, len(v)):
+			x1 = v[j][0]
+			y1 = v[j][1]
+			x2 = v[i][0]
+			y2 = v[i][1]
+			td = math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) )
+			if td < d:
+				d = td
+	return d
+
+test_cases = open(sys.argv[1], 'r')
+n = -1
+for test in test_cases:
+	if( len(test) > 0 ) and (n != 0):
+		if n == -1:
+			n = int(test)
+			i = 0
+			pts = []
+		else:
+			xy = test.split(' ')
+			x = float(xy[0])
+			y = float(xy[1])
+			pts.append( (x,y) )
+			i += 1
+			if i == n:
+				d = mindist(pts)
+				if d < 10000.0:
+					print '%(dd).4f' % { 'dd':d }
+				else:
+					print 'INFINITY'
+				n = -1
+test_cases.close()

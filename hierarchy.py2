@@ -1,0 +1,51 @@
+import sys
+
+def get_hierarchy(sub, tr):
+	ln = 0
+	if sub in tr:
+		ln = len(tr[sub])
+	else:
+		return ""
+	if ln == 0:
+		return "[" + str(sub) + "]"
+	else:
+		ret = "["
+		for i in tr[sub]:
+			tmp = get_hierarchy(i, tr)
+			if len(tmp) > 0:
+				ret += str(i) + " " + tmp + ", "
+			else:
+				ret += str(i) + ", "
+		ret = ret[0:len(ret)-2]	
+		ret += "]"
+	return ret
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split(' ')
+		tree = dict()
+		for x in s:
+			if len(x) == 2:
+				if x[0] not in tree:
+					tree[x[0]] = set( [ x[1] ] )
+				else:
+					tree[x[0]].add( x[1] )
+		root = ''			
+		for k in tree.keys():
+			tree[k] = sorted(tree[k])
+		for k in tree.keys():	
+			if len(tree[k]) > 0:
+				root = k
+				for kk in tree.keys():
+					if (k != kk) and (k in tree[kk]):
+						root = ''
+						break;
+				if root != '':
+					break;
+		# print tree # debug
+		# print root # debug
+		print root + " " + get_hierarchy(root, tree)
+test_cases.close()

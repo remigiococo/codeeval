@@ -1,0 +1,27 @@
+import sys
+
+def decode_gray(st, val):
+	ls = len(st)
+	if ls == 1:
+		return val + int(st)
+	if st[0:1] == '0':
+		return val + decode_gray(st[1:], val)
+	else:
+		pw = (1 << (ls-1))
+		return val + pw + (pw-1-decode_gray(st[1:], val))
+		
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split('|')
+		n = [x.strip() for x in s]
+		# print n # debug
+		d = [decode_gray(x, 0) for x in n]
+		# print d # debug
+		oo = ""
+		for x in d:
+			oo += str(x) + " | "
+		print oo[0:len(oo)-3]	
+test_cases.close()

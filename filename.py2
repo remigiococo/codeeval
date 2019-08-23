@@ -1,0 +1,36 @@
+import sys
+import re
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		s = test.split(' ')
+		p = s[0].rstrip()
+		y = re.findall("\[.+?\]", p)
+		# print y # debug
+		for x in y:
+			p = p.replace(x, "[]")
+		p = p.replace(".", "\\.")
+		p = p.replace("*", ".*")
+		p = p.replace("?", ".")
+		yy = re.findall("\[\]", p)
+		# print y # debug
+		for i in xrange( len(yy) ):
+			p = p.replace(yy[i], y[i], 1)
+		#print s[0], p # debug
+		cnt = 0
+		oo = ""
+		for x in s[1:]:
+			x = x.strip()
+			m = re.match(p, x, flags=re.I)
+			if m:
+				if m.group(0) == x:
+					oo += x + " "
+					cnt += 1
+		if cnt > 0:		
+			print oo.rstrip()
+		else:
+			print '-'
+test_cases.close()

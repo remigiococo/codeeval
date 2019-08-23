@@ -1,0 +1,41 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split('|')
+		m = [ []  for x in s ]
+		i = 0
+		for x in s:
+			j = 0
+			for b in x.strip():
+				m[i].append( int(b) )
+			i = i+1
+		# print m # debug
+		n = len(m[0])
+		for d in xrange(1,n+1):
+			flag = 0
+			ncars = -1
+			for starti in xrange(0,n-d+1):
+				for startj in xrange(0, n-d+1):
+					cars = 0
+					for i in xrange(starti, starti+d):
+						for j in xrange(startj, startj+d):
+							if m[i][j] == 1:
+								cars = cars+1
+					# print "d=", d, "si=", starti, "sj=", startj, cars	# debug 		
+					if ncars == -1:
+						ncars = cars
+					elif cars != ncars:
+						d = d+1
+						flag = 1
+					if flag == 1:
+						break
+				if flag == 1:
+					break
+			if flag == 0:
+				break
+		print str(d) + "x" + str(d) + ", " + str(ncars)			
+test_cases.close()

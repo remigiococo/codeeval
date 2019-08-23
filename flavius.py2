@@ -1,0 +1,27 @@
+import sys
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		num = test.split(',')
+		if( len(num) == 2 ):
+			n = int(num[0])
+			m = int(num[1])
+			a = [0 for i in range(n)]
+			j = -1
+			c = 0
+			s = ""
+			i = 0
+			while i < n:
+				j += 1
+				j = (j % n)
+				if a[j] == 0:
+					c += 1
+				if c == m:
+					i += 1
+					c = 0
+					s += str(j)
+					a[j] = 1
+					if i < n:
+						s += " "
+			print s
+test_cases.close()

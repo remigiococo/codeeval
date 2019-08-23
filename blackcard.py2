@@ -1,0 +1,17 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split('|')
+		nm = s[0].strip().split(' ')
+		n = int(s[1].strip())
+		# print nm, n # debug
+		ln = len(nm)
+		while ln > 1:
+			del nm[(n-1) % ln]
+			ln = len(nm)
+		print nm[0]	
+test_cases.close()

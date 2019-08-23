@@ -1,0 +1,49 @@
+import sys
+from math import ceil, sqrt
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(' ')
+		v = []
+		for x in s:
+			y = x.split(',')
+			v.append( (int(y[0]), int(y[1])) )
+		# print v # debug
+		nv = len(v)
+		d = [ [0 for j in xrange(nv)] for i in xrange(nv) ]
+		minl = 0
+		for i in xrange(nv):
+			for j in xrange(i+1, nv):
+				dx = v[i][0] - v[j][0]
+				dx *= dx
+				dy = v[i][1] - v[j][1]
+				dy *= dy
+				if dx == 0 and dy == 0:
+					d[i][j] = 1000000
+				else:	
+					d[i][j] = int( ceil( sqrt( dx + dy ) ) )
+				d[j][i] = d[i][j]
+		# print d	# debug
+		vc = set()
+		i = 0
+		totl = 0
+		while len(vc) < nv:
+			minl = 1000000
+			ndx = -1
+			for j in xrange(nv):
+				if (j != i) and (v[j] not in vc):
+					if d[i][j] < minl:
+						minl = d[i][j]
+						ndx = j
+			print "---", minl, i, ndx
+			if ndx != -1:
+				vc.add(v[ndx])
+				totl += minl
+				for j in xrange(nv):
+					if j not in vc:
+						i = j
+		print totl
+test_cases.close()

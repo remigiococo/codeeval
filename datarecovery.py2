@@ -1,0 +1,29 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		s = test.split(';')
+		s[0] = s[0].rstrip()
+		s[1] = s[1].rstrip()
+		t = s[0].split(' ')
+		n = s[1].split(' ')
+		lt = len(t)
+		ln = len(n)
+		ot = [ '' for i in xrange(lt) ]
+		nn = [ int(x) for x in n ]
+		for i in xrange( ln+1 ):
+			if (i+1) not in nn:
+				nx = i+1
+				#print "nx", nx # debug
+				break;
+		nn.append( nx )		
+		#print t, n, nn # debug
+		for i in xrange(lt):
+			j = nn[i] - 1
+			ot[j] = t[i]
+		for i in xrange(lt):
+			print ot[i],
+		print	
+test_cases.close()

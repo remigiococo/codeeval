@@ -1,0 +1,170 @@
+import sys
+import string
+import copy
+
+gpath = []
+gpath_tmp = []
+minlen = 1000000
+
+def find_exit(r, c, lab, vis, l):
+	global gpath
+	global gpath_tmp
+	global minlen
+	global width
+	global height
+	if l > minlen:
+		return 1000000
+	#w = len( lab[0] )
+	#h = len( lab )
+	#print "----", r, c # debug
+	if r == (height-1) and lab[r][c] == ' ':
+		if l < minlen:
+			# print "---", l # debug
+			minlen = l
+			#gpath[:] = []
+			gpath = copy.deepcopy(gpath_tmp)
+		return l # exit found
+	minl = 1000000
+	tmp = 0
+	if (r + 1) < height:		
+		if lab[r+1][c] == ' ' and vis[r+1][c] == 0:
+			vis[r+1][c] = 1
+			gpath_tmp.append( (r+1,c) )	
+			tmp = find_exit(r+1, c, lab, vis, l+1)
+			vis[r+1][c] = 0
+			gpath_tmp.remove( (r+1,c) )	
+			if tmp < minl:
+				minl = tmp
+	if (c - 1) > 0:		
+		if lab[r][c-1] == ' ' and vis[r][c-1] == 0:
+			vis[r][c-1] = 1
+			gpath_tmp.append( (r,c-1) )
+			tmp = find_exit(r, c-1, lab, vis, l+1)
+			vis[r][c-1] = 0
+			gpath_tmp.remove( (r,c-1) )	
+			if tmp < minl:
+				minl = tmp
+	if (c + 1) < width:
+		if lab[r][c+1] == ' ' and vis[r][c+1] == 0:
+			vis[r][c+1] = 1
+			gpath_tmp.append( (r,c+1) )
+			tmp = find_exit(r, c+1, lab, vis, l+1)
+			vis[r][c+1] = 0
+			gpath_tmp.remove( (r,c+1) )	
+			if tmp < minl:
+				minl = tmp
+	if (r - 1) > 0:
+		if lab[r-1][c] == ' ' and vis[r-1][c] == 0:
+			vis[r-1][c] = 1
+			gpath_tmp.append( (r-1,c) )
+			tmp = find_exit(r-1, c, lab, vis, l+1)
+			vis[r-1][c] = 0
+			gpath_tmp.remove( (r-1,c) )
+			if tmp < minl:
+				minl = tmp
+	return minl			
+
+def find_exit2(r, c, lab, vis, l):
+	global gpath
+	global minlen
+	global width
+	global height
+	if l > minlen:
+		return 1000000
+	#w = len( lab[0] )
+	#h = len( lab )
+	#print "----", r, c # debug
+	if r == (height-1) and lab[r][c] == ' ':
+		if l < minlen:
+			# print "---", l # debug
+			minlen = l
+			#gpath[:] = []
+			gpath = copy.deepcopy(vis)
+		return l # exit found
+	minl = 1000000
+	tmp = 0
+	if (r + 1) < height:		
+		if lab[r+1][c] == ' ' and vis[r+1][c] == 0:
+			vis[r+1][c] = 1
+			tmp = find_exit2(r+1, c, lab, vis, l+1)
+			vis[r+1][c] = 0
+			if tmp < minl:
+				minl = tmp
+	if (c - 1) > 0:		
+		if lab[r][c-1] == ' ' and vis[r][c-1] == 0:
+			vis[r][c-1] = 1
+			tmp = find_exit2(r, c-1, lab, vis, l+1)
+			vis[r][c-1] = 0
+			if tmp < minl:
+				minl = tmp
+	if (c + 1) < width:
+		if lab[r][c+1] == ' ' and vis[r][c+1] == 0:
+			vis[r][c+1] = 1
+			tmp = find_exit2(r, c+1, lab, vis, l+1)
+			vis[r][c+1] = 0
+			if tmp < minl:
+				minl = tmp
+	if (r - 1) > 0:
+		if lab[r-1][c] == ' ' and vis[r-1][c] == 0:
+			vis[r-1][c] = 1
+			tmp = find_exit2(r-1, c, lab, vis, l+1)
+			vis[r-1][c] = 0
+			if tmp < minl:
+				minl = tmp
+	return minl			
+	
+def draw_path(lab, path):
+	w = len( lab[0] )
+	h = len( lab )
+	for r in xrange(h):
+		oo = ""
+		for c in xrange(w):
+			if lab[r][c] == ' ':
+				if ((r,c) in path):
+				#if vis[r][c] == 1:
+					oo += '+'
+				else:
+					oo += ' '
+			else:
+				oo += '*'
+		print oo		
+
+def draw_path2(lab, vis):
+	w = len( lab[0] )
+	h = len( lab )
+	for r in xrange(h):
+		oo = ""
+		for c in xrange(w):
+			if lab[r][c] == ' ':
+				if vis[r][c] == 1:
+					oo += '+'
+				else:
+					oo += ' '
+			else:
+				oo += '*'
+		print oo		
+		
+laby = []
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ): # optional check
+		test = string.rstrip(test, '\r\n')
+		# processing
+		tmp = [ c for c in test ]
+		laby.append( tmp )
+test_cases.close()
+# print laby # debug
+width = len( laby[0] )
+height = len( laby )
+cs = -1
+for i in xrange(width):
+	if laby[0][i] == ' ':
+		cs = i
+		break
+v = [ [0 for j in xrange(width)] for i in xrange(height) ]
+v[0][cs] = 1
+gpath_tmp.append( (0,cs) )
+lenlab = find_exit2(0, cs, laby, v, 1)
+#print lenlab # debug
+if lenlab != 1000000:
+	draw_path2(laby, gpath)

@@ -1,0 +1,24 @@
+import sys
+import string
+import re
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(',')
+		moves = len(s[0])
+		for x in s:
+			m = re.search('X[\.]+Y', x)
+			if m:
+				n = string.count(m.group(0), ".")
+				if n > 0 and n < moves:
+					moves = n
+				if n == 0 and "Y" in x:
+					moves = 0
+			else:
+				if "X" in x and "Y" in x:
+					moves = 0
+		print moves		
+test_cases.close()

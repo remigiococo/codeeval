@@ -1,0 +1,30 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip('\n')
+	test = test.rstrip(' ')
+	if( len(test) > 0 ):
+		# print test
+		s = test.split(' ')
+		# print s # debug
+		l = int(s[0])
+		d = int(s[1])
+		n = int(s[2])
+		cnt = 0
+		if (n == 0) and (l >= 12):
+			cnt = 1+((l-12)/d)
+		else:	
+			cnt = 1
+			pos = []
+			for i in xrange(n):
+				pos.append( int(s[3+i]) )
+			# print pos # debug
+			curpos = 6
+			for i in xrange(n):
+				delta = pos[i]-d-curpos
+				cnt += (delta/d)
+				curpos = pos[i]
+			cnt += ((l-6-curpos)/d)	
+		print cnt	
+test_cases.close()

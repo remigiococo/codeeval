@@ -1,0 +1,22 @@
+import sys
+import string
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		test = string.rstrip(test, '\r\n')
+		l = len(test)
+		for i in xrange(1, l+1):
+			j = 0
+			s = test[0:i]
+			#print str(i) + " --- " + s
+			ok = True
+			while j < l:
+				if (s != test[j:j+i]):
+					#print str(j) + ' - ' + s + ' ' + test[j:j+i]
+					ok = False
+					break
+				j = j + i
+			if ok == True:
+				print i
+				break
+test_cases.close()		

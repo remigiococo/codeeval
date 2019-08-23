@@ -1,0 +1,25 @@
+import sys
+
+# rows, columns to add
+kn_moves = [ (+1, -2), (+1, +2), (+2, -1), (+2, +1), (-1, -2), (-1, +2), (-2, -1), (-2, +1) ]
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		col = ord( test[0] ) - ord( 'a' ) + 1
+		row = int( test[1] )
+		# print row, col # debug
+		mv = []
+		for x in kn_moves:
+			nr = row + x[0]
+			nc = col + x[1]
+			if nr > 0 and nr <= 8 and nc > 0 and nc <= 8:
+				mv.append( chr( nc + ord('a') - 1 ) + str(nr) )
+		mv = sorted(mv)
+		oo = ""
+		for x in mv:
+			oo += x + " "
+		print oo[0: len(oo)-1]	
+test_cases.close()

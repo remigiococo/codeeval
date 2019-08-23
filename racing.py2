@@ -1,0 +1,64 @@
+import sys
+
+prevg = -1
+prevc = -1
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		gpos = -1
+		cpos = -1
+		lt = len(test)
+		for i in xrange(lt):
+			if test[i] == '_':
+				gpos = i
+			if test[i] == 'C':
+				cpos = i
+		#print gpos, cpos # debug
+		if cpos >= 0:
+			if prevc >= 0:
+				if prevc == cpos:
+					#test[cpos] = '|'
+					test=test.replace('C', '|', 1)
+				if prevc == cpos-1:
+					#test[cpos] = '\\'
+					test=test.replace('C', '\\', 1)
+				if prevc == cpos+1:
+					#test[cpos] = '/'
+					test=test.replace('C', '/', 1)
+			else:	
+				if prevg == cpos:
+					#test[cpos] = '|'
+					test=test.replace('C', '|', 1)
+				if prevg == cpos-1:
+					#test[cpos] = '\\'
+					test=test.replace('C', '\\', 1)
+				if prevg == cpos+1:
+					#test[cpos] = '/'
+					test=test.replace('C', '/', 1)
+		else:
+			if prevc >= 0:
+				if prevc == gpos:
+					#test[gpos] = '|'
+					test=test.replace('_', '|', 1)
+				if prevc == gpos-1:
+					#test[gpos] = '\\'
+					test=test.replace('_', '\\', 1)
+				if prevc == gpos+1:
+					#test[gpos] = '/'
+					test=test.replace('_', '/', 1)
+			else:	
+				if prevg == gpos or prevg == -1:
+					#test[gpos] = '|'
+					test=test.replace('_', '|', 1)
+				if prevg == gpos-1:
+					#test[gpos] = '\\'
+					test=test.replace('_', '\\', 1)
+				if prevg == gpos+1:
+					#test[gpos] = '/'
+					test=test.replace('_', '/', 1)
+		prevg = gpos
+		prevc = cpos
+		print test
+test_cases.close()

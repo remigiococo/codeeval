@@ -1,0 +1,61 @@
+import sys
+
+N=10
+
+def draw(m):
+	for i in xrange(N):
+		print m[i]
+
+def trace_ray(pr,pc,r,c,m):
+	if (r < 0) or (r >= N):
+		return
+	if (c < 0) or (c >= N):
+		return
+	if m[r][c] == 'o':
+		return
+	if (r == 0) or (r == N-1):
+		if (c == 0) or (c == N-1):
+			return
+	if m[pr][pc] == '/':
+		if m[r][c] == ' ':
+			m[r][c] == '/'
+			trace_ray(r,c,r-1,c+1,m)
+		elif m[r][c] == '#':
+			if r >= 1:
+				m[r-1][c] = '\\'
+				trace_ray(r,c,r-1,c,m)
+		elif m[r][c] == '*':
+			trace_ray(r,c,r-1,c+1,m)
+			trace_ray(r,c,r+1,c+1,m)
+			trace_ray(r,c,r-1,c-1,m)
+	elif m[pr][pc] == '\\':
+		if m[r][c] == ' ':
+			m[r][c] == '\\'
+			trace_ray(r,c,r-1,c+1,m)
+		elif m[r][c] == '#':
+			trace_ray(r,c,r-1,c,m)
+		elif m[r][c] == '*':
+			trace_ray(r,c,r-1,c+1,m)
+			trace_ray(r,c,r-1,c-1,m)
+			trace_ray(r,c,r+1,c-1,m)
+		
+r1=-1
+c1=-1		
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		mat=[]
+		for i in xrange(N):
+			mat.append(test[i*N:(i+1)*N])
+			if '/' in mat[i]:
+				r1 = i
+				c1 = mat[i].index('/')
+			if '\\' in mat[i]:
+				r1 = i
+				c1 = mat[i].index('\\')
+		# print r1,c1 # debug
+		draw(mat) # debug
+test_cases.close()
+

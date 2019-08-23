@@ -1,0 +1,39 @@
+import sys
+import re
+
+def intersect(a, b, c, d):
+	s1 = [ b[0] - a[0], b[1] - a[1] ]
+	s2 = [ d[0] - c[0], d[1] - c[1] ]
+	s = (-s1[1] * (a[0] - c[0]) + s1[0] * (a[1] - c[1])) / (-s2[0] * s1[1] + s1[0] * s2[1])
+	t = ( s2[0] * (a[1] - c[1]) - s2[1] * (a[0] - c[0])) / (-s2[0] * s1[1] + s1[0] * s2[1])
+	if (s > 0.0) and (s < 1.0) and (t > 0.0) and (t < 1.0):
+		return 1
+	return 0
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		p = test.strip().split(' ')
+		xc = re.findall('[0-9][0-9]*', p[0])
+		yc = re.findall('[0-9][0-9]*', p[1])
+		# print xc, yc # debug
+		x = [ float(z) for z in xc ]
+		y = [ float(z) for z in yc ]
+		lx = len(x)
+		ly = len(y)
+		# print x, y # debug
+		v1 = [ x[0], y[0] ]
+		v2 = [ x[lx-1], y[ly-1] ]
+		cnt = 0
+		for i in xrange(1, lx):
+			for j in xrange(1, ly):
+				# p2---+
+				# +----p1
+				p1 = [ x[i], y[j-1] ]
+				p2 = [ x[i-1], y[j] ]
+				if intersect(p1,p2,v1,v2) == 1:
+					cnt += 1
+					# print i,j,p1, p2 # debug
+		print cnt
+test_cases.close()

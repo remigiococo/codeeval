@@ -1,0 +1,16 @@
+import sys
+import string
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		n = int(test)-1
+		oo = ""
+		while n >= 0:
+			m = n % 26
+			oo = string.uppercase[m] + oo
+			n = (n / 26) - 1
+		print oo	
+test_cases.close()

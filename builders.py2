@@ -1,0 +1,67 @@
+import sys
+
+# check_sq(current edge, edge set, number of nodes)
+def check_sq(e, eset, n):
+	nsq = 0
+	start = e[0]
+	end = e[1]
+	maxe = n-((start-1)%n)+1
+	# print "check edge=", e, "maxe=", maxe # debug
+	# j ---- j+1
+	# |
+	# j+n -- j+n+1
+	for i in xrange(1, maxe+1):
+		# print "i=", i # debug
+		# top edges
+		topf = 1
+		for j in xrange(start, start+i):
+			if (j, j+1) not in eset:
+				topf = 0
+				break
+		# left edges
+		leftf = 1
+		for j in xrange(start, start+i*n, n):
+			if (j, j+n) not in eset:
+				leftf = 0
+				break
+		# bottom edges		
+		botf = 1
+		for j in xrange(start+i*n, start+i*n+i):
+			if (j, j+1) not in eset:
+				botf = 0
+				break
+		# right edges
+		rightf = 1
+		for j in xrange(start+i, start+i*n+i, n):
+			if (j, j+n) not in eset:
+				rightf = 0
+				break
+		if (topf==1) and (botf==1) and (leftf==1) and (rightf==1):
+			nsq += 1
+			# print "---", e, i # debug
+	return nsq
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		tmp = test.split('|')
+		edges = set()
+		nnodes = 1
+		for x in tmp:
+			y = x.strip().split(' ')
+			e1 = min( int(y[0]), int(y[1]) )
+			e2 = max( int(y[0]), int(y[1]) )
+			edges.add( (e1, e2) )
+			if abs(e1-e2) > nnodes:
+				nnodes = abs(e1-e2)
+		# print edges, nnodes # debug
+		nsqu = 0
+		vis = set()
+		for x in edges:
+			if x[0] not in vis:
+				nsqu += check_sq(x, edges, nnodes)
+				vis.add( x[0] )
+		print nsqu	
+test_cases.close()

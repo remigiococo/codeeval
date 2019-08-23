@@ -1,0 +1,36 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		n = int(test)
+		# print n # debug
+		nmez = n/2
+		if nmez == 1:
+			print 10
+			continue
+		maxs = 9*nmez
+		maxs2 = maxs/2
+		ncp = [0 for i in xrange(maxs+1)]
+		for i in xrange(10):
+			ncp[i] = 1
+		nc = [0 for i in xrange(maxs+1)]
+		for i in xrange(2, nmez+1):
+			for j in xrange(maxs+1):
+				nc[j] = 0
+				if j > 9:
+					sn = j-9
+				else:
+					sn = 0
+				for k in xrange(sn,j+1):
+					nc[j] += ncp[k]
+			for j in xrange(maxs+1):	
+				ncp[j] = nc[j]
+			# print ncp, nc # debug
+		ntot = 0
+		for i in xrange(maxs+1):
+			ntot += nc[i]*nc[i]
+		print ntot	
+test_cases.close()

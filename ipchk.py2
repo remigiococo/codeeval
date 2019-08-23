@@ -1,0 +1,63 @@
+import sys
+import re
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		addr = re.findall('[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}', test[0:40])
+		#print addr # debug
+		la = 0
+		addr_n = []
+		for x in addr:
+			la += len(x)
+			y = x.split('.')
+			n = 0
+			for z in y:
+				n <<= 8
+				n += int(z)
+			addr_n.append(n)
+			#print '%x' % n #debug
+		pack = re.findall(' [0-9A-Fa-f]{2}', test[la:])
+		#print pack #debug
+		len_h = ( int(pack[0], 16) & 0xF ) * 4
+		#print len_h #debug
+		pack_n = [ int(x, 16) for x in pack[0:len_h] ]
+		#print pack_n #debug
+		# src ip
+		pack_n[12] = ( addr_n[0] & 0xFF000000 )	>> 24
+		pack_n[13] = ( addr_n[0] & 0x00FF0000 )	>> 16
+		pack_n[14] = ( addr_n[0] & 0x0000FF00 )	>> 8
+		pack_n[15] = ( addr_n[0] & 0x000000FF )
+		# dst ip
+		pack_n[16] = ( addr_n[1] & 0xFF000000 )	>> 24
+		pack_n[17] = ( addr_n[1] & 0x00FF0000 )	>> 16
+		pack_n[18] = ( addr_n[1] & 0x0000FF00 )	>> 8
+		pack_n[19] = ( addr_n[1] & 0x000000FF )
+		# chksum before calculation
+		pack_n[10] = 0
+		pack_n[11] = 0
+		#print pack_n #debug
+		cc = [0 for i in xrange(len_h/2)]
+		i = 0
+		j = 0
+		sum = 0
+		while i < len_h:
+			cc[j] = (pack_n[i] << 8) + pack_n[i+1]
+			sum += cc[j]
+			j += 1
+			i += 2
+		n = sum	
+		while (n & 0xFFFF0000) > 0:
+			t = (n & 0xFFFF) + ( (n & 0xFFFF0000) >> 16 )
+			n = t
+		n = n	^ 0xFFFF
+		#print '%x' % n	#debug
+		pack_n[10] = (n & 0xFF00) >> 8
+		pack_n[11] = (n & 0x00FF)
+		oo = ''
+		for x in pack_n:
+			oo += ('%02x' % x) + ' '
+		print oo[0:len(oo)-1]	
+test_cases.close()

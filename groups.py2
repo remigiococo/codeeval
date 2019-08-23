@@ -1,0 +1,72 @@
+import sys
+
+fr_n = dict()
+usr = []
+friends = []
+groups = []
+grset = set()
+j = 0
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		s = test.split(':')
+		usr.append(s[0])
+		fr_n[ s[0] ] = j
+		fr = s[1].rstrip().split(',')
+		gr = s[2].rstrip().split(',')
+		friends.append( set() )
+		groups.append( set() )
+		for f in fr:
+			friends[j].add(f)
+		for g in gr:
+			if len(g) > 0:
+				groups[j].add(g)
+				grset.add(g)
+		j += 1
+		#print fr # debug
+		#print gr #debug
+test_cases.close()
+# print fr_n # debug
+# serve ?
+#for i in xrange( len(friends) ):
+# for f in friends[i]:
+#		if (f in fr_n) and (f != usr[i]):
+#			friends[ fr_n[f] ].add(usr[i])
+# mappa inversa gruppi/utenti
+usrgr = dict()
+for g in grset:
+	usrgr[ g ] = set()
+	for i in xrange( len(groups) ):
+		for gg in groups[i]:
+			if gg == g:
+				usrgr[g].add( usr[i] )
+#print usrgr	# debug			
+#for i in xrange( len(friends) ): # debug
+#	print i # debug
+#	print friends[i] # debug
+# print grset # debug
+#for gl in groups: # debug
+#	print len(gl), gl # debug
+sugg = []
+for i in xrange( len(friends) ):
+	sugg.append( set() )
+	for g in grset:
+		if g not in groups[i]:
+			intx = friends[i].intersection(	usrgr[g] )
+			# print i, g, intx # debug
+			if len( intx ) >= (len( friends[i] ) / 2.0):
+				sugg[i].add(g)
+usr = sorted(usr)				
+for u in usr:
+	i = fr_n[u]
+	if len( sugg[i] ) > 0:
+		sugg[i] = sorted( sugg[i] )
+		oo = ""
+		for j in xrange( len(sugg[i]) ):
+			if j < len(sugg[i])-1:
+				oo += sugg[i][j] + ","
+			else:
+				oo += sugg[i][j]
+		print usr[i] + ":" + oo		

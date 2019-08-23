@@ -1,0 +1,32 @@
+import sys
+
+def stupidsort(v, n):
+	it = 0
+	ex = 0
+	while (it < n) and (ex == 0):
+		ex = 1
+		for i in xrange(len(v)-1):
+			if v[i] > v[i+1]:
+				ex = 0
+				v[i], v[i+1] = v[i+1], v[i]
+				break
+		it = it+1		
+	return v
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split('|')
+		ni = int( s[1].strip() )
+		sn = s[0].strip().split(' ')
+		vn = [int(x) for x in sn]
+		# print vn, ni # debug
+		y = stupidsort(vn, ni)
+		# print y # debug
+		oo = ""
+		for yy in y:
+			oo += str(yy) + " "
+		print oo[0:len(oo)-1]	
+test_cases.close()

@@ -1,0 +1,92 @@
+import sys
+
+def binary_det(m):
+	lm = len(m)
+	for i in xrange(lm):
+		# 1st row with 1st el. == 1
+		if m[i][i] != 1:
+			for j in xrange(i+1,lm):
+				if m[j][i] == 1:
+					tmp = m[j]
+					m[j] = m[i]
+					m[i] = tmp
+					break
+		# diagonalize			
+		for j in xrange(i+1, lm):
+			if m[j][i] != 0:
+				tmp = [ m[j][k]^m[i][k] for k in xrange(lm)]
+				m[j] = tmp
+	# print "---", m # debug
+	r = 1
+	rank = 0
+	for i in xrange(lm):
+		if m[i][i] == 1:
+			rank += 1
+		r *= m[i][i]
+	return r, rank	
+
+def calc_moves(rows, cols):
+	mv = [[] for k in xrange(rows*cols)]
+	for i in xrange(rows):
+		for j in xrange(cols):
+			appo = [0 for k in xrange(rows*cols)]
+			appo[i*cols+j] = 1
+			if i > 0:
+				appo[(i-1)*cols+j] = 1
+			if i < (rows-1):
+				appo[(i+1)*cols+j] = 1
+			if j > 0:
+				appo[i*cols+j-1] = 1
+			if j < (cols-1):
+				appo[i*cols+j+1] = 1
+			mv[i*cols+j] = appo
+	# transpose		
+	mvt = []		
+	for i in xrange(rows*cols):
+		appo = [mv[k][i] for k in xrange(rows*cols)]
+		mvt.append(appo)
+	return mvt
+
+def solve(a,x):
+	la = len(a)
+	b = [ a[j][0:] for j in xrange(la) ]
+	dt, rnk0 = binary_det(b)
+	# if dt == 0:
+		# print "rank", rnk0 # debug
+		#a = [ b[i][0:rnk0] for i in xrange(rnk0)]
+		#la = rnk0
+		#return -1
+	y = [0 for i in xrange(la)]	
+	for i in xrange(la):
+		b = [ a[j][0:] for j in xrange(la) ]
+		for j in xrange(la):
+			b[j][i] = x[j]
+		y[i], rnk = binary_det(b)
+		# print "subst rank", rnk # debug
+		if rnk > rnk0:
+			return -1 # ???
+		# print "subst. matrix", b, y[i]
+	# print "solution", y
+	if dt == 0:
+		return la - rnk0
+	return y.count(1)
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(' ')
+		n = int(s[0])
+		m = int(s[1])
+		lg = n*m
+		gr = s[2].strip().split('|')
+		grid = [0 for i in xrange(n*m)]
+		vis = [0 for i in xrange(n*m)]
+		for i in xrange(n):
+			for j in xrange(m):
+				if gr[i][j] == 'O':
+					grid[i*m+j] = 1
+		moves = calc_moves(n,m)
+		print solve(moves,grid)
+test_cases.close()

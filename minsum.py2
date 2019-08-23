@@ -1,0 +1,32 @@
+import sys
+
+
+def calc_sum(x, v):
+	su = 0
+	for y in v:
+		z = x-y 
+		if x < y:
+			z = -z # piu' efficiente di abs(x-y) ? 
+		su += z
+	return su
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(' ')
+		f = int(s[0])
+		v = [int(x) for x in s[1:]]
+		sm = sum(v)
+		#sma = [ sum( v[0:i] ) for i in xrange(f+1) ]
+		#smb = [ (sm - x) for x in sma ]
+		#print sma
+		#print smb
+		mins = sm
+		for i in xrange( min(v), max(v)+1 ):
+			csum = calc_sum(i, v)
+			if csum < mins:
+				mins = csum
+		print mins		
+test_cases.close()

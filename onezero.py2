@@ -1,0 +1,30 @@
+import sys
+
+def check_zero(x, nz):
+	tmp = x
+	cz = 0
+	while tmp > 0:
+		if (tmp & 1) == 0:
+			cz += 1
+			if cz > nz:
+				return False
+		tmp >>= 1
+	if cz != nz:
+		return False
+	else:
+		return True
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split(' ')
+		n = [int(x) for x in s]
+		# print n # debug
+		cnt = 0
+		for i in xrange(1, n[1]+1):
+			if check_zero(i, n[0]):
+				cnt += 1
+		print cnt		
+test_cases.close()

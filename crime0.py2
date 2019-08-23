@@ -1,0 +1,80 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(';')
+		n = int( s[0] )
+		tr = s[1].lstrip().split('|')
+		# print tr # debug
+		dd = dict()
+		dd[0] = 0
+		me = 0
+		ml = 0
+		ct = 0
+		tote = 0
+		for x in tr:
+			if ct == 1:
+				break
+			y = x.split(' ')
+			op = y[0]
+			m = int(y[1])
+			if m in dd.keys():
+				if m == 0:
+					if op == 'L':
+						#if "IN" not in dd.values():
+						ml = ml + 1
+						cnt = 0
+						for x in dd.keys():
+							if dd[x] == "IN" or dd[x] == "XIN":
+								dd[x] = "XOUT"
+							if dd[x] == "IN":	
+								cnt += 1
+						if cnt > 0:
+							tote -= 1
+					else:
+						#if "OUT" not in dd.values():
+						me = me + 1
+						cnt = 0
+						for x in dd.keys():
+							if dd[x] == "OUT" or dd[x] == "XOUT":
+								dd[x] = "XIN"
+							if dd[x] == "OUT":	
+								cnt += 1
+						if cnt > 0:
+							tote += 1
+				else:
+					# m != 0
+					if op == 'L':
+						if dd[m] == "OUT":
+							ct = 1
+						else:
+							dd[m] = "OUT"
+							tote -= 1
+					else:
+						if dd[m] == "IN":
+							ct = 1
+						else:		
+							dd[m] = "IN"
+							tote += 1
+			else:
+				# m not yet in dd
+				if op == 'L':
+					dd[m] = "OUT"
+					#if me > 0:
+					#	me = me - 1
+				else:
+					dd[m] = "IN"
+					tote += 1
+					#if ml > 0:
+					#	ml = ml - 1
+		print dd, me, ml, tote # debug
+		if ct == 1:
+			print "CRIME TIME"
+		else:
+			ddl = [1 for x in dd.keys() if dd[x] == "IN"]
+			su = sum( ddl )
+			print tote - ml + me
+test_cases.close()

@@ -1,0 +1,69 @@
+import sys
+
+def next_state(g, i, j, rows, cols):
+	ret = '.'
+	neighb = 0
+	mini = i-1
+	minj = j-1
+	maxi = i+1
+	maxj = j+1
+	if i == 0:
+		mini = i
+	if j == 0:
+		minj = j
+	if i == rows-1:
+		maxi = i
+	if j == cols-1:
+		maxj = j
+	for ii in xrange(mini, maxi+1, 1):
+		for jj in xrange(minj, maxj+1, 1):
+			if not ( (ii == i) and (jj == j) ):
+				#print g[ii][jj], # debug
+				if g[ii][jj] == '*':
+					neighb += 1
+	#print i, j, neighb # debug				
+	# live cell
+	if g[i][j] == '*':	
+		if neighb < 2:
+			# under population
+			ret = '.'
+		elif neighb <= 3:
+			# normal
+			ret = '*'
+		else: 
+			# over population
+			ret = '.'
+	else:
+		# dead cell
+		if neighb == 3:
+			# reproduction
+			ret = '*'
+	return ret
+	
+test_cases = open(sys.argv[1], 'r')
+nrow = 0
+ncol = 0
+grid = []
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		if ncol == 0:
+			ncol = len(test) # assumo righe tutte della stessa lunghezza
+		grid.append(test)
+		nrow += 1	
+test_cases.close()
+#print nrow, ncol # debug
+#print grid # debug
+for it in xrange(10):
+	ngrid = []
+	for ix in xrange(nrow):
+		s = ''
+		for jx in xrange(ncol):
+			s += next_state(grid, ix, jx, nrow, ncol)
+		#print s	# debug
+		ngrid.append(s)
+	grid = ngrid
+	#print grid # debug
+for it in xrange(nrow):
+	print grid[it]

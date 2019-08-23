@@ -1,0 +1,25 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(' ')
+		n = int(s[0])
+		m = int(s[1])
+		nb = [0 for i in xrange(n)]
+		sec = [ 0 for i in xrange(n)]
+		thi = [ 0 for i in xrange(n)]
+		for i in xrange(n):
+			if (i%2) == 1:
+				sec[i] = 1
+			if (i%3) == 2:
+				thi[i] = 1
+		for i in xrange(m-1):
+			nb = [nb[i]|sec[i] for i in xrange(n)]
+			nb = [nb[i]^thi[i] for i in xrange(n)]
+		nb[n-1] ^= 1
+		# print nb # debug
+		print nb.count(0)	
+test_cases.close()

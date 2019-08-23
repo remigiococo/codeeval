@@ -1,0 +1,170 @@
+import sys
+import re
+
+def check_ip(n):
+	if (n >= 16777216) and (n <= 4294967294):
+		return True
+	return False	
+
+def	dd_int(s):
+	st = s.split('.')
+	n = 0
+	t = 24
+	for x in st:
+		y = int(x)
+		if y > 255:
+			return 0
+		n += ( y << t )
+		t -= 8
+	return n
+
+def do_int(s):
+	st = s.split('.')
+	n = 0
+	t = 24
+	for x in st:
+		y = int(x, 8)
+		if y > 255:
+			return 0
+		n += ( y << t )
+		t -= 8
+	return n
+	
+def dh_int(s):
+	st = s.split('.')
+	n = 0
+	t = 24
+	for x in st:
+		y = int(x, 16)
+		if y > 255:
+			return 0
+		n += ( y << t )
+		t -= 8
+	return n
+
+def db_int(s):
+	st = s.split('.')
+	n = 0
+	t = 24
+	for x in st:
+		y = int(x, 2)
+		if y > 255:
+			return 0
+		n += ( y << t )
+		t -= 8
+	return n
+	
+def n_dd(m):
+	t = 24
+	s = ''
+	for i in xrange(4):
+		s += str((m & (255 << t))>>t) + '.'
+		t -= 8
+	s = s[0:len(s)-1]
+	return s
+	
+iplist = dict()
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		# dotted dec
+		dd = re.findall('[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}', test)
+		# if len(dd): print "dd", dd
+		for x in dd:
+			n = dd_int(x)
+			# print n
+			if check_ip(n):
+				ip = n_dd(n)
+				if ip in iplist:
+					iplist[ ip ] += 1
+				else:	
+					iplist[ ip ] = 1
+		# dotted hex
+		dh = re.findall('0x[0-9A-Fa-f]{1,2}\.0x[0-9A-Fa-f]{1,2}\.0x[0-9A-Fa-f]{1,2}\.0x[0-9A-Fa-f]{1,2}', test)
+		# if len(dh): print "dh", dh
+		for x in dh:
+			n = dh_int(x)
+			if check_ip(n):
+				ip = n_dd(n)
+				if ip in iplist:
+					iplist[ ip ] += 1
+				else:	
+					iplist[ ip ] = 1
+		# dotted oct
+		do = re.findall('0[0-7]{3}\.0[0-7]{3}\.0[0-7]{3}\.0[0-7]{3}', test)
+		# if len(do): print "do", do
+		for x in do:
+			n = do_int(x)
+			if check_ip(n):
+				ip = n_dd(n)
+				if ip in iplist:
+					iplist[ ip ] += 1
+				else:	
+					iplist[ ip ] = 1
+		# dotted bin
+		db = re.findall('[01]{1,8}\.[01]{1,8}\.[01]{1,8}\.[01]{1,8}', test)
+		# if len(db): print "db", db
+		for x in db:
+			n = db_int(x)
+			if check_ip(n):
+				ip = n_dd(n)
+				if ip in iplist:
+					iplist[ ip ] += 1
+				else:	
+					iplist[ ip ] = 1
+		# bin
+		bi = re.findall('[01]{25,32}', test)
+		# if len(bi): print "bi", bi
+		for x in bi:
+			n = int(x,2)
+			if check_ip(n):
+				ip = n_dd(n)
+				if ip in iplist:
+					iplist[ ip ] += 1
+				else:	
+					iplist[ ip ] = 1
+		# oct
+		oc = re.findall('0[0-7]{15}', test)
+		# if len(oc): print "oc", oc
+		for x in oc:
+			n = int(x,8)
+			if check_ip(n):
+				ip = n_dd(n)
+				if ip in iplist:
+					iplist[ ip ] += 1
+				else:	
+					iplist[ ip ] = 1
+		# hex
+		he = re.findall('0x[0-9A-Fa-f]{7,8}', test)
+		# if len(he): print "he", he
+		for x in he:
+			n = int(x,16)
+			if check_ip(n):
+				ip = n_dd(n)
+				if ip in iplist:
+					iplist[ ip ] += 1
+				else:	
+					iplist[ ip ] = 1
+		# dec
+		de = re.findall('[1-9][0-9]{8,10}', test)
+		# if len(de): print "de", de
+		for x in de:
+			n = int(x)
+			if check_ip(n):
+				ip = n_dd(n)
+				if ip in iplist:
+					iplist[ ip ] += 1
+				else:	
+					iplist[ ip ] = 1
+test_cases.close()
+nmax = 0
+kmax = ''
+for x in iplist.keys():
+	if iplist[x] > nmax:
+		nmax = iplist[x]
+		kmax = x
+# print iplist # debug
+print kmax	

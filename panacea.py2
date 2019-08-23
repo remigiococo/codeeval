@@ -1,0 +1,19 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split('|')
+		virs = s[0].strip().split(' ')
+		avirs = s[1].strip().split(' ')
+		# print virs, avirs # debug
+		vir = [int(x,16) for x in virs]
+		avir = [int(x,2) for x in avirs]
+		# print vir, avir # debug
+		if sum(avir) >= sum(vir):
+			print "True"
+		else:
+			print "False"
+test_cases.close()

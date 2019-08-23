@@ -1,0 +1,100 @@
+import sys
+import string
+
+def diffcnt(s1, s2):
+	cnt = 0
+	for i in xrange(len(s1)):
+		if s1[i] != s2[i]:
+			cnt += 1
+	return cnt
+
+def levenshtein(s1, s2):
+	l1 = len(s1)
+	l2 = len(s2)
+	if l1 == 0:
+		return l2
+	if l2 == 0:
+		return l1
+	cost = 0	
+	if s1[l1-1] == s2[l2-1]:
+		cost = 0
+	else:
+		cost = 1
+	d1 = levenshtein(s1[0:l1-1], s2)+1
+	d2 = levenshtein(s1, s2[0:l2-1])+1
+	d3 = levenshtein(s1[0:l1-1], s2[0:l2-1])+cost
+	return min(d1, d2, d3)
+
+def levenshtein2(s1, s2):
+	if s1 == s2:
+		return 0
+	l1 = len(s1)
+	l2 = len(s2)
+	if l1 == 0:
+		return l2
+	if l2 == 0:
+		return l1
+	prev = [i for i in xrange(l2+1)]
+	curr = [0 for i in xrange(l2+1)]
+	for i in xrange(l1):
+		curr[0] = i+1
+		for j in xrange(l2):
+			cost = 0
+			if s1[i] != s2[j]:
+				cost = 1
+			curr[j+1] = min(curr[j]+1, prev[j]+cost, prev[j+1]+1)
+		for j in xrange(l2+1):
+			prev[j] = curr[j]
+	return curr[l2]
+
+def levenshtein3(a,b):
+	# "Calculates the Levenshtein distance between a and b."
+	n, m = len(a), len(b)
+	if n > m:
+	# Make sure n <= m, to use O(min(n,m)) space
+		a,b = b,a
+		n,m = m,n
+	current = range(n+1)
+	for i in range(1,m+1):
+		previous, current = current, [i]+[0]*n
+		for j in range(1,n+1):
+			add, delete = previous[j]+1, current[j-1]+1
+			change = previous[j-1]
+			if a[j-1] != b[i-1]:
+				change = change + 1
+			current[j] = min(add, delete, change)
+	return current[n]
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = string.rstrip(test)
+		s = string.split(test, ' ')
+		p = s[0]
+		m = len(p)
+		n = int(s[1])
+		x = s[2]
+		l = []
+		#print m, n , len(x) #debug
+		for i in xrange(m+1):
+			l.append([])
+		for i in xrange(len(x) - m + 1):
+			#ld = diffcnt(x[i:i+m], p)
+			ld = levenshtein2(x[i:i+m], p)
+			#print '--- ', x[i:i+m], p, ld #debug
+			if ld <= n:
+				l[ld].append(x[i:i+m])
+		tot = 0		
+		for i in xrange(len(l)):		
+			tot += len(l[i])
+			l[i] = sorted(l[i])
+		if tot > 0:
+			oo = ''
+			for i in xrange(len(l)):
+				for j in xrange(len(l[i])):
+					oo += l[i][j] + ' '
+			print string.rstrip(oo)		
+		else:
+			print 'No match'
+test_cases.close()

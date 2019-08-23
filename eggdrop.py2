@@ -1,0 +1,87 @@
+import sys
+import array
+#
+#eggDrop(n, k) = 1 + min{max(eggDrop(n - 1, x - 1), eggDrop(n, k - x)): x in {1, 2, ..., k}}
+#
+def eggdrop(n,k):
+	f = [[0 for j in xrange(k+1)] for i in xrange(n+1)]
+	# f[n][k] = drops for n eggs, k floors
+	for i in xrange(1, n+1):
+		f[i][0] = 0
+		f[i][1] = 1
+	for j in xrange(1, k+1):
+		f[1][j] = j
+	for i in xrange(2, n+1):
+		for j in xrange(2, k+1):
+			res = []
+			for x in xrange(1, j+1):
+				res.append( 1+max(f[i-1][x-1],f[i][j-x]) )
+			f[i][j] = min(res)
+	# print f # debug			
+	return f[n][k]
+
+def eggdrop2(n,k):
+	f = [[0 for j in xrange(k+1)] for i in xrange(n+1)]
+	# f[n][k] = drops for n eggs, k floors
+	for i in xrange(1, n+1):
+		f[i][0] = 0
+		f[i][1] = 1
+	for j in xrange(1, k+1):
+		f[1][j] = j
+	for i in xrange(2, n+1):
+		for j in xrange(2, k+1):
+			f[i][j] = min( [1+max(f[i-1][x-1],f[i][j-x]) for x in xrange(1, j+1)] )
+	# print f # debug			
+	return f[n][k]
+
+def eggdrop3(n,k):
+	nn = n+1
+	kk = k+1
+	f = array.array('l', [0]*(kk*nn))
+	# f[n][k] = drops for n eggs, k floors
+	for i in xrange(1, n+1):
+		f[i*kk+0] = 0
+		f[i*kk+1] = 1
+	for j in xrange(1, k+1):
+		f[1*kk+j] = j
+	for i in xrange(2, n+1):
+		row = i*kk
+		row1 = (i-1)*kk
+		for j in xrange(2, k+1):
+			f[row+j] = 1000000000
+			for x in xrange(1, j+1):
+				a = f[row1+x-1]
+				b = f[row+j-x]		
+				if a > b:
+					if a < f[row+j]:
+						f[row+j] = a + 1
+				else:	
+					if b < f[row+j]:
+						f[row+j] = b + 1
+	# print f # debug			
+	return f[n*kk+k]
+	
+def eggdropr(n,k):
+	#print n, k # debug
+	if n == 1:
+		return k
+	if k < 200:
+		r = eggdrop(n,k)
+		#print "---", r
+		return r
+	else:
+		m = k >> 1
+		a = eggdropr(n-1,m-1)
+		b = eggdropr(n,k-m)
+		return min(1+a,1+b)
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		s = test.split(' ')
+		eggs = int(s[0])
+		floors = int(s[1])
+		print eggdrop3(eggs,floors)
+test_cases.close()

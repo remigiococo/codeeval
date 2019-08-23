@@ -1,0 +1,15 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		n = int(test)
+		c = 0
+		while n > 0:
+			if n & 1 == 1:
+				c = c+1
+			n = n>>1
+		print c		
+test_cases.close()

@@ -1,0 +1,19 @@
+import sys
+import fnmatch
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		s = test.split(' ')
+		p = s[0]
+		l = fnmatch.filter(s[1:], p)
+		if len(l) > 0:
+			oo = ""
+			for i in l:
+				oo += i + " "
+			print oo.rstrip()
+		else:
+			print "-"
+test_cases.close()

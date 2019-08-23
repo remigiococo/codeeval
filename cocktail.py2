@@ -1,0 +1,36 @@
+import sys
+
+def cocktail(a, iter):
+	la = len(a)
+	sj = 0
+	ej = la-1
+	st = 1
+	for i in xrange(iter*2):
+		for j in xrange(sj,ej,st):
+			if a[j] > a[j+1]:
+				a[j], a[j+1] = a[j+1], a[j]
+		st = -st
+		if st == 1:
+			sj = 0
+			ej = la-1
+		else:
+			sj = la-2
+			ej = -1
+	return a
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split('|')
+		sv = s[0].strip().split(' ')
+		v = [int(x) for x in sv]
+		n = int(s[1])
+		#print v, n # debug
+		vv = cocktail(v, n)
+		oo = ""
+		for x in vv:
+			oo += str(x) + " "
+		print oo[0:len(oo)-1]	
+test_cases.close()

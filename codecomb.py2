@@ -1,0 +1,32 @@
+import sys
+
+code_set = set( ['c', 'o', 'd', 'e'] )
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split('|')
+		m = []
+		for x in s:
+			y = x.strip()
+			ly = [z for z in y]
+			m.append(ly)
+		# print m # debug
+		nr = len(m)
+		nc = len(m[0])
+		cnt = 0	
+		for i in xrange(nr-1):
+			for j in xrange(nc-1):
+				subr = m[i:i+2]
+				subm = set()
+				subm.add( subr[0][j] )
+				subm.add( subr[0][j+1] )
+				subm.add( subr[1][j] )
+				subm.add( subr[1][j+1] )
+				# print "subm", subm
+				if subm == code_set:
+					cnt = cnt + 1
+		print cnt			
+test_cases.close()

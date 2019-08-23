@@ -1,0 +1,267 @@
+import sys
+
+class bits:
+	def __init__(self):
+		self.x = [0,0,0,0]
+		
+	def __xor__(self,y):
+		r = bits()
+		for i in xrange(4):
+			r.x[i] = self.x[i]^y.x[i]
+		return r
+
+	def __and__(self,y):
+		r = bits()
+		for i in xrange(4):
+			r.x[i] = self.x[i]&y.x[i]
+		return r
+
+	def __or__(self,y):
+		r = bits()
+		for i in xrange(4):
+			r.x[i] = self.x[i]|y.x[i]
+		return r
+
+	def __eq__(self,y):
+		r = True
+		for i in xrange(4):
+			if self.x[i] != y.x[i]:
+				r = False
+				break
+		return r
+
+	def iszero(self):
+		r = True
+		for i in xrange(4):
+			if self.x[i] != 0:
+				r = False
+				break
+		return r
+		
+	def firstOne(self):
+		for i in xrange(4):
+			tmp = self.x[i]
+			for j in xrange(32):
+				if ( tmp & (1 << 31-j) ) != 0:
+					return i*32+j
+
+	def set_bit(self, n):
+		self.x[n >> 5] |= ( 1 << (31 - (n & 0x1F)) )
+
+	def clear_bit(self, n):
+		self.x[n >> 5] &= ~( 1 << (31 - (n & 0x1F)) )
+
+	def is_set_bit(self, n):
+		if ( self.x[n >> 5] & ( 1 << (31 - (n & 0x1F)) ) ) != 0:
+			return True
+		return False
+		
+	def from_list(self, l):
+		ll = len(l)
+		for i in xrange(ll):
+			self.x[i >> 5] |= ( l[i] << (31 - (i & 0x1F)) )
+	
+	def __str__(self):
+		oo = ""
+		for i in xrange(4):
+			oo += hex(self.x[i]) + " "
+		oo += "\n"
+		return oo	
+
+gbits = bits()
+
+def binary_det(m):
+	lm = len(m)
+	for i in xrange(lm):
+		# 1st row with 1st el. == 1
+		if m[i][i] != 1:
+			for j in xrange(i+1,lm):
+				if m[j][i] == 1:
+					tmp = m[j]
+					m[j] = m[i]
+					m[i] = tmp
+					break
+		# diagonalize			
+		for j in xrange(i+1, lm):
+			if m[j][i] != 0:
+				tmp = [ m[j][k]^m[i][k] for k in xrange(lm)]
+				m[j] = tmp
+	# print "---", m # debug
+	r = 1
+	for i in xrange(lm):
+		r *= m[i][i]
+	return r	
+
+def calc_moves0(rows, cols):
+	mv = [[] for k in xrange(rows*cols)]
+	for i in xrange(rows):
+		for j in xrange(cols):
+			appo = [0 for k in xrange(rows*cols)]
+			appo[i*cols+j] = 1
+			if i > 0:
+				appo[(i-1)*cols+j] = 1
+			if i < (rows-1):
+				appo[(i+1)*cols+j] = 1
+			if j > 0:
+				appo[i*cols+j-1] = 1
+			if j < (cols-1):
+				appo[i*cols+j+1] = 1
+			mv[i*cols+j] = appo
+	# transpose		
+	mvt = []		
+	for i in xrange(rows*cols):
+		appo = [mv[k][i] for k in xrange(rows*cols)]
+		mvt.append(appo)
+	return mvt
+	
+def calc_moves(rows, cols):
+	mv = []
+	for i in xrange(rows):
+		for j in xrange(cols):
+			appo = [0 for k in xrange(rows*cols)]
+			appo[i*cols+j] = 1
+			if i > 0:
+				appo[(i-1)*cols+j] = 1
+			if i < (rows-1):
+				appo[(i+1)*cols+j] = 1
+			if j > 0:
+				appo[i*cols+j-1] = 1
+			if j < (cols-1):
+				appo[i*cols+j+1] = 1
+			t = bits()
+			t.from_list(appo)	
+			mv.append(t)
+			#mv.append(appo)
+	#return sorted(mv, reverse=True)
+	return mv
+
+def start_moves(curgrid, v):
+	return start_moves3(curgrid, v)
+
+def start_moves3(curgrid, v):
+	global moves, lg
+	#lg = len(curgrid)
+	ndx = curgrid.firstOne()
+	ret = []		
+	for i in xrange(lg):
+		if (v[i] == 0):
+			if moves[i].is_set_bit(ndx):
+				ret.append(i)
+			# break # ???
+	return ret
+	
+def start_moves1(curgrid, v):
+	global moves
+	lg = len(curgrid)
+	ndx = -1
+	for i in xrange(lg):
+		if curgrid[i] == 1:
+			ndx = i
+			break
+	ret = []		
+	for i in xrange(lg):
+		if (v[i] == 0) and (moves[i][ndx] == 1):
+			ret.append(i)
+			# break # ???
+	return ret
+	
+def start_moves2(curgrid, v):
+	global moves
+	lg = len(curgrid)
+	ndx = -1
+	for i in xrange(lg):
+		if curgrid[i] == 1:
+			ndx = i
+			break
+	ret = []		
+	for i in xrange(lg):
+		if (v[i] == 0) and (moves[i][ndx] == 1) and (moves[i][0:ndx].count(1) == 0):
+			ret.append(i)
+		elif (moves[i][0:ndx+1].count(1) == 0):
+			break
+	return ret
+			
+def min_moves0(curgrid, curmove, v, lev):
+	global moves
+	lg = len(curgrid)
+	tmp = [curgrid[i]^moves[curmove][i] for i in xrange(lg)]
+	# print "---", lev, tmp # debug
+	if tmp.count(0) == lg:
+		return lev
+	mm = 1000000
+	mndx = start_moves(tmp, v)
+	for curm in mndx:
+		v[curm] = 1
+		tmpm = min_moves(tmp, curm, v, lev+1)
+		v[curm] = 0
+		if tmpm < mm:
+			mm = tmpm
+	return mm
+
+def min_moves(curgrid, curmove, v, lev):
+	global moves, lg
+	tmp = curgrid ^ moves[curmove]
+	if tmp.iszero():
+		return lev
+	mm = 1000000
+	mndx = start_moves3(tmp, v)
+	for curm in mndx:
+		v[curm] = 1
+		tmpm = min_moves(tmp, curm, v, lev+1)
+		v[curm] = 0
+		if tmpm < mm:
+			mm = tmpm
+	return mm
+
+def solve(a,x):
+	la = len(a)
+	b = [ a[j][0:] for j in xrange(la) ]
+	dt = binary_det(b)
+	if dt == 0:
+		return -1
+	y = [0 for i in xrange(la)]	
+	for i in xrange(la):
+		b = [ a[j][0:] for j in xrange(la) ]
+		for j in xrange(la):
+			b[j][i] = x[j]
+		y[i] = binary_det(b)
+		# print "subst. matrix", b, y[i]	
+	return y.count(1)
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(' ')
+		n = int(s[0])
+		m = int(s[1])
+		lg = n*m
+		gr = s[2].strip().split('|')
+		gri = [0 for i in xrange(n*m)]
+		vis = [0 for i in xrange(n*m)]
+		for i in xrange(n):
+			for j in xrange(m):
+				if gr[i][j] == 'O':
+					gri[i*m+j] = 1
+		#grid = bits()
+		#grid.from_list(gri)	
+		grid = gri
+		# print grid # debug
+		moves = calc_moves0(n,m)
+		#print moves # debug
+		#print binary_det(moves)
+		print solve(moves,grid)
+		#minm = 1000000
+		#mndx = start_moves(grid, vis)
+		#for curm in mndx:
+		#	vis[curm] = 1
+		#	tm = min_moves(grid, curm, vis, 1)
+		#	vis[curm] = 0
+		#	if tm < minm:
+		#		minm = tm
+		#if minm == 1000000:
+		#	print -1
+		#else:
+		#	print minm
+test_cases.close()

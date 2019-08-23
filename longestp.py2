@@ -1,0 +1,85 @@
+import sys
+import math
+
+#15
+#11
+#16
+#3
+#7
+
+def find_longest(r, c, m, vis, b, l):
+	global maxlen
+	global width
+	#print "----", r, c, m[r][c] # debug
+		#return l # exit found
+	maxl = 0
+	tmp = 0
+	if (r + 1) < width:		
+		if (m[r+1][c] not in b) and vis[r+1][c] == 0:
+			vis[r+1][c] = 1
+			b.add(m[r+1][c])
+			tmp = find_longest(r+1, c, m, vis, b, l+1)
+			vis[r+1][c] = 0
+			b.remove(m[r+1][c])
+			if tmp > maxl:
+				maxl = tmp
+	if (c - 1) >= 0:		
+		if (m[r][c-1] not in b) and vis[r][c-1] == 0:
+			vis[r][c-1] = 1
+			b.add(m[r][c-1])
+			tmp = find_longest(r, c-1, m, vis, b, l+1)
+			vis[r][c-1] = 0
+			b.remove(m[r][c-1])
+			if tmp > maxl:
+				maxl = tmp
+	if (c + 1) < width:
+		if (m[r][c+1] not in b) and vis[r][c+1] == 0:
+			vis[r][c+1] = 1
+			b.add(m[r][c+1])
+			tmp = find_longest(r, c+1, m, vis, b, l+1)
+			vis[r][c+1] = 0
+			b.remove(m[r][c+1])
+			if tmp > maxl:
+				maxl = tmp
+	if (r - 1) >= 0:
+		if (m[r-1][c] not in b) and vis[r-1][c] == 0:
+			vis[r-1][c] = 1
+			b.add(m[r-1][c])
+			tmp = find_longest(r-1, c, m, vis, b, l+1)
+			vis[r-1][c] = 0
+			b.remove(m[r-1][c])
+			if tmp > maxl:
+				maxl = tmp
+	if maxl == 0:
+		if l > maxlen:
+			maxlen = l
+		#print "---", l # debug	
+		return l
+	if maxl > maxlen:
+		maxlen = maxl
+	return maxl			
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		n2 = len(test)
+		n = int( math.sqrt(n2) )
+		width = n
+		# print n, test # debug
+		mat = [ [c for c in test[i*n:i*n+n] ] for i in xrange(n) ]
+		v = [ [0 for j in xrange(n)] for i in xrange(n) ]
+		# print mat, v # debug
+		maxlen = 0
+		bag = set()
+		for i in xrange(n):
+			for j in xrange(n):
+				v = [ [0 for jj in xrange(n)] for ii in xrange(n) ]
+				v[i][j] = 1
+				bag.clear()
+				bag.add( mat[i][j] )
+				find_longest(i,j,mat,v,bag,1)
+				#print bag
+		print maxlen		
+test_cases.close()

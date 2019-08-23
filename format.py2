@@ -1,0 +1,44 @@
+import sys
+
+def format_word_list(l):
+	totlen = 0
+	nw = len(l)
+	for w in l:
+		totlen += len(w)
+	totspaces = 80 - totlen
+	eqspaces = int(totspaces/(nw-1))
+	resspaces = totspaces - (eqspaces*(nw-1))
+	# print totlen, totspaces, eqspaces, resspaces # debug
+	oo = ""
+	for i in xrange(nw):
+		ns = 0
+		if resspaces > 0:
+			ns = 1
+			resspaces -= 1
+		oo += l[i]
+		if i < (nw-1):
+			oo += " " * (eqspaces+ns)
+	print oo
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(' ')
+		lw = []
+		lenw = 0
+		for w in s:
+			lenw += len(w)
+			if lenw > 80:
+				# print lw # debug
+				format_word_list(lw)
+				lenw = len(w)
+				lw = []
+			lenw += 1	
+			lw.append(w)
+		oo = ""	
+		for w in lw:
+			oo += w + " "
+		print oo
+test_cases.close()

@@ -1,0 +1,19 @@
+import sys, string
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip(' ')
+	test = test.rstrip('\n')
+	if( len(test) > 0 ):
+		# print test
+		lc = 0
+		nc = len(test)
+		for c in test:
+			if c in string.lowercase:
+				lc += 1
+		#print "nc", nc, " lc", lc #debug		
+		lp = 100.0 * float(lc) / float(nc)
+		lp = round(lp, 2)
+		up = 100.0 - lp
+		print "lowercase: {0:.2f} uppercase: {1:.2f}".format(lp, up)	
+test_cases.close()

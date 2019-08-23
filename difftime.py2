@@ -1,0 +1,30 @@
+import sys
+import time
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		s = test.split(' ')
+		day1 = ' 2000-01-01'
+		day2 = ' 2000-01-01'
+		if s[0][0:2] == '24':
+			s[0] = s[0].replace("24", "00", 1)
+			# print "replaced", s[0] # debug
+			day1 = ' 2000-01-02'
+		if s[1][0:2] == '24':
+			s[1] = s[1].replace("24", "00", 1)
+			# print "replaced", s[1] # debug
+			day2 = ' 2000-01-02'
+		t1 = time.strptime(s[0] + day1, '%H:%M:%S %Y-%m-%d')
+		t2 = time.strptime(s[1] + day2, '%H:%M:%S %Y-%m-%d')
+		# print t1, t2 # debug
+		if t1 > t2:
+			diff = time.mktime(t1)-time.mktime(t2)
+		else:
+			diff = time.mktime(t2)-time.mktime(t1)
+		difftm = time.gmtime(diff)	
+		# print diff, difftm # debug
+		print time.strftime('%H:%M:%S', difftm)
+test_cases.close()

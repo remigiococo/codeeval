@@ -1,0 +1,29 @@
+import sys
+
+periods = [ [2,4,8,6], [3,9,7,1], [4,6], [5], [6], [7,9,3,1], [8,4,2,6], [9,1] ]
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(' ')
+		b = int(s[0])
+		e = int(s[1])
+		p = periods[b-2]
+		lp = len(p)
+		cnt = [0 for i in xrange(10)]
+		m = e / lp
+		n = e % lp
+		for i in xrange(lp):
+			cnt[ p[i] ] = m
+		for i in xrange(1,n+1):
+			ndx = ( i - 1 )% lp
+			cnt[ p[ndx] ] += 1
+		oo = ''	
+		for i in xrange(10):
+			oo += str(i) + ": " + str(cnt[i])
+			if i < 9:
+				oo += ", "
+		print	oo	
+test_cases.close()

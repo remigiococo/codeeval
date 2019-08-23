@@ -1,0 +1,26 @@
+import sys, string
+
+hs = set()
+for x in string.lowercase:
+	hs.add(x)
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		hs2 = set()
+		for c in test:
+			x = string.lower(c)
+			if x in string.lowercase:
+				hs2.add(x)
+		# print hs, hs2 # debug	
+		if len(hs) == len(hs2):
+			print "NULL"
+		else:
+			oo = ""
+			for x in string.lowercase:
+				if x not in hs2:
+					oo += x
+			print oo		
+test_cases.close()

@@ -1,0 +1,94 @@
+import sys
+
+def min_entries(tra, l, n, cur, sta):
+	minx = 1000000
+	if l == n:
+		# print sta # debug
+		tmpi = sta.values().count('IN')
+		return cur+tmpi
+	# print l, tra[l], cur, sta # debug		
+	y = tra[l].split(' ')
+	op = y[0]
+	m = int(y[1])
+	if op == 'L':
+		if m == 0:
+			for i in sta.keys():
+				if sta[i] == 'IN':
+					sta[i] = 'OUT'
+					tmp = min_entries(tra, l+1, n, cur, sta)
+					if tmp < minx:
+						minx = tmp
+					sta[i] = 'IN'
+			exi = 0
+			if cur > 0:
+				exi = 1
+			tmp = min_entries(tra, l+1, n, cur-exi, sta)
+			if tmp < minx:
+				minx = tmp
+		else: # m != 0
+			ins = 0
+			if m in sta.keys():
+				if sta[m] == 'OUT':
+					return 1000000
+				else:
+					sta[m] = 'OUT'
+			else:
+				sta[m] = 'OUT'
+				ins = 1
+			exi = 0
+			if ins == 1 and cur > 0:
+				exi = 1
+			tmp = min_entries(tra, l+1, n, cur-exi, sta)
+			if tmp < minx:
+				minx = tmp
+			if ins == 1:
+				del sta[m]
+			else:
+				sta[m] = 'IN'
+	else: # op = 'E'
+		if m == 0:
+			for i in sta.keys():
+				if sta[i] == 'OUT':
+					sta[i] = 'IN'
+					tmp = min_entries(tra, l+1, n, cur, sta)
+					if tmp < minx:
+						minx = tmp
+					sta[i] = 'OUT'
+			tmp = min_entries(tra, l+1, n, cur+1, sta)
+			if tmp < minx:
+				minx = tmp
+		else: # m != 0
+			ins = 0
+			if m in sta.keys():
+				if sta[m] == 'IN':
+					return 1000000
+				else:
+					sta[m] = 'IN'
+			else:
+				sta[m] = 'IN'
+				ins = 1
+			tmp = min_entries(tra, l+1, n, cur, sta)
+			if tmp < minx:
+				minx = tmp
+			if ins == 1:
+				del sta[m]
+			else:
+				sta[m] = 'OUT'
+	return minx
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(';')
+		n = int( s[0] )
+		tr = s[1].lstrip().split('|')
+		#print tr # debug
+		st = dict()
+		tmp = min_entries(tr, 0, n, 0, st)
+		if tmp == 1000000:
+			print 'CRIME TIME'
+		else:
+			print tmp
+test_cases.close()

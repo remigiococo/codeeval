@@ -1,0 +1,23 @@
+import sys
+import string
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = string.rstrip(test)
+	if( len(test) > 0 ):
+		# print test
+		nn = test.split(' ')
+		ln = len(nn)
+		cur = int(nn[0])
+		cnt = 0
+		for i in xrange( ln ):
+			n = int(nn[i])
+			if n != cur:
+				print str(cnt) + ' ' + str(cur),
+				cur = n
+				cnt = 0
+			cnt += 1
+		#if ln > 1:	
+		#	print
+		print str(cnt) + ' ' + str(cur)
+test_cases.close()

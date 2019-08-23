@@ -1,0 +1,29 @@
+import sys
+
+row1 = '-**----*--***--***---*---****--**--****--**---**--'
+row2 = '*--*--**-----*----*-*--*-*----*-------*-*--*-*--*-'
+row3 = '*--*---*---**---**--****-***--***----*---**---***-'
+row4 = '*--*---*--*-------*----*----*-*--*--*---*--*----*-'
+row5 = '-**---***-****-***-----*-***---**---*----**---**--'
+row6 = '--------------------------------------------------'
+
+rowdisp = [ row1, row2, row3, row4, row5, row6 ]
+ 
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		n = ''
+		for d in test:
+			if d in '0123456789':
+				n += d
+		# print n # debug
+		rows = [ '', '', '', '', '', '' ]
+		for d in n:
+			i = int(d)
+			for j in xrange(6):
+				rows[j] += rowdisp[j][i*5:i*5+5]
+		for i in xrange(6):
+			print rows[i]
+test_cases.close()

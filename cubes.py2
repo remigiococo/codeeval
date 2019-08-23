@@ -1,0 +1,364 @@
+#import sys
+import string
+#import copy
+from sys import argv
+#from string import find, rstrip
+
+# The holes allow you to move to a lower level (if it is on the floor of the current level), to move to a 
+# higher level (if it is on the floor of the higher level), or to move over the hole on the current level. 
+
+minlen = 1000000
+
+class context:
+	def __init__(self):
+		self.l = 0
+		self.r = 0
+		self.c = 0
+		self.lab = []
+		self.vis = []
+		self.lun = 0
+	
+def calc_index(l, r, c):
+	global width, w2
+	return l*w2 + r*width + c
+	
+def find_minlen(l, r, c, lab, vis, lun):
+	global minlen
+	global width
+	global end_row
+	if lun >= minlen-1:
+		return 1000000
+	# print "---", l, r, c	
+	#cur = calc_index(l,r,c)
+	lw2 = l*w2
+	rw = r*width
+	cur = lw2+rw+c
+	if (l == (width-1)) and (r == end_row) and (lab[cur] == ' '):
+		if lun < minlen:
+			minlen = lun
+		# print "$$$", lun	
+		return lun # exit found
+	minl = 1000000
+	tmp = 0
+	# (l+1, r, c)
+	if (l + 1) < width:
+		#ndx = calc_index(l+1, r, c)
+		ndx = lw2+w2+rw+c
+		if lab[ndx] == 'o' and vis[ndx] == 0:
+			vis[ndx] = 1
+			tmp = find_minlen(l+1, r, c, lab, vis, lun+1)
+			vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l, r+1, c)			
+	if (r + 1) < width:		
+		#ndx = calc_index(l, r+1, c)
+		ndx = lw2+rw+width+c 
+		#if (lab[ndx] == ' ' or lab[ndx] == 'o') and vis[ndx] == 0:
+		if lab[ndx] != '*' and vis[ndx] == 0:
+			vis[ndx] = 1
+			tmp = find_minlen(l, r+1, c, lab, vis, lun+1)
+			vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l, r-1, c)			
+	if (r - 1) >= 0:
+		#ndx = calc_index(l, r-1, c)
+		ndx = lw2+rw-width+c
+		#if (lab[ndx] == ' ' or lab[ndx] == 'o') and vis[ndx] == 0:
+		if lab[ndx] != '*' and vis[ndx] == 0:
+			vis[ndx] = 1
+			tmp = find_minlen(l, r-1, c, lab, vis, lun+1)
+			vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l, r, c-1)						
+	if (c - 1) >= 0:		
+		#ndx = calc_index(l, r, c-1)
+		ndx = lw2+rw+c-1
+		#if (lab[ndx] == ' ' or lab[ndx] == 'o') and vis[ndx] == 0:
+		if lab[ndx] != '*' and vis[ndx] == 0:
+			vis[ndx] = 1
+			tmp = find_minlen(l, r, c-1, lab, vis, lun+1)
+			vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l, r, c+1)			
+	if (c + 1) < width:
+		#ndx = calc_index(l, r, c+1)
+		ndx = lw2+rw+c+1
+		#if (lab[ndx] == ' ' or lab[ndx] == 'o') and vis[ndx] == 0:
+		if lab[ndx] != '*' and vis[ndx] == 0:
+			vis[ndx] = 1
+			tmp = find_minlen(l, r, c+1, lab, vis, lun+1)
+			vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l-1, r, c)			
+	if (l - 1) >= 0:
+		#ndx = calc_index(l-1, r, c)
+		ndx = lw2-w2+rw+c
+		if lab[cur] == 'o' and lab[ndx] == ' ' and vis[ndx] == 0:
+			vis[ndx] = 1
+			tmp = find_minlen(l-1, r, c, lab, vis, lun+1)
+			vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	return minl			
+
+def find_minlen2(ctx):
+	global minlen
+	global width
+	global end_row
+	if ctx.lun >= minlen-1:
+		return 1000000
+	# print "---", l, r, c	
+	#cur = calc_index(ctx.l,ctx.r,ctx.c)
+	lw2 = ctx.l*w2
+	rw = ctx.r*width	
+	cur = lw2+rw+ctx.c
+	if (ctx.l == (width-1)) and (ctx.r == end_row) and (ctx.lab[cur] == ' '):
+		if ctx.lun < minlen:
+			minlen = ctx.lun
+		#print "$$$", ctx.lun	
+		return ctx.lun # exit found
+	minl = 1000000
+	tmp = 0
+	# (l+1, r, c)
+	if (ctx.l + 1) < width:
+		ndx = lw2+w2+rw+ctx.c
+		if ctx.lab[ndx] == 'o' and ctx.vis[ndx] == 0:
+			ctx.vis[ndx] = 1
+			ctx.l += 1
+			ctx.lun += 1
+			tmp = find_minlen2(ctx)
+			ctx.l -= 1
+			ctx.lun -= 1
+			ctx.vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l, r+1, c)			
+	if (ctx.r + 1) < width:		
+		ndx = lw2+rw+width+ctx.c 
+		if ctx.lab[ndx] != '*' and ctx.vis[ndx] == 0:
+			ctx.vis[ndx] = 1
+			ctx.r += 1
+			ctx.lun += 1
+			tmp = find_minlen2(ctx)
+			ctx.r -= 1
+			ctx.lun -= 1
+			ctx.vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l, r-1, c)			
+	if (ctx.r - 1) >= 0:
+		ndx = lw2+rw-width+ctx.c
+		if ctx.lab[ndx] != '*' and ctx.vis[ndx] == 0:
+			ctx.vis[ndx] = 1
+			ctx.r -= 1
+			ctx.lun += 1
+			tmp = find_minlen2(ctx)
+			ctx.r += 1
+			ctx.lun -= 1
+			ctx.vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l, r, c-1)						
+	if (ctx.c - 1) >= 0:		
+		ndx = lw2+rw+ctx.c-1
+		if ctx.lab[ndx] != '*' and ctx.vis[ndx] == 0:
+			ctx.vis[ndx] = 1
+			ctx.c -= 1
+			ctx.lun += 1
+			tmp = find_minlen2(ctx)
+			ctx.c += 1
+			ctx.lun -= 1
+			ctx.vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l, r, c+1)			
+	if (ctx.c + 1) < width:
+		ndx = lw2+rw+ctx.c+1
+		if ctx.lab[ndx] != '*' and ctx.vis[ndx] == 0:
+			ctx.vis[ndx] = 1
+			ctx.c += 1
+			ctx.lun += 1
+			tmp = find_minlen2(ctx)
+			ctx.c -= 1
+			ctx.lun -= 1
+			ctx.vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l-1, r, c)			
+	if (ctx.l - 1) >= 0:
+		ndx = lw2-w2+rw+ctx.c
+		if ctx.lab[cur] == 'o' and ctx.lab[ndx] == ' ' and ctx.vis[ndx] == 0:
+			ctx.vis[ndx] = 1
+			ctx.l -= 1
+			ctx.lun += 1
+			tmp = find_minlen2(ctx)
+			ctx.l += 1
+			ctx.lun -= 1
+			ctx.vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	return minl			
+
+def find_minlen_rev(l, r, c, lab, vis, lun):
+	global minlen
+	global width, w2
+	global start_row
+	if lun >= minlen-1:
+		return 1000000
+	# print "---", l, r, c	
+	#cur = calc_index(l,r,c)
+	lw2 = l*w2
+	rw = r*width
+	cur = lw2+rw+c
+	if (l == 0) and (r == start_row) and (lab[cur] == ' '):
+		if lun < minlen:
+			minlen = lun
+		# print "$$$", lun	
+		return lun # start found
+	minl = 1000000
+	tmp = 0
+	# (l-1, r, c)			
+	if (l - 1) >= 0:
+		#ndx = calc_index(l-1, r, c)
+		ndx = lw2-w2+rw+c
+		if lab[cur] == 'o' and lab[ndx] == ' ' and vis[ndx] == 0:
+			vis[ndx] = 1
+			tmp = find_minlen_rev(l-1, r, c, lab, vis, lun+1)
+			vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l, r-1, c)			
+	if (r - 1) >= 0:
+		#ndx = calc_index(l, r-1, c)
+		ndx = lw2+rw-width+c
+		#if (lab[ndx] == ' ' or lab[ndx] == 'o') and vis[ndx] == 0:
+		if lab[ndx] != '*' and vis[ndx] == 0:
+			vis[ndx] = 1
+			tmp = find_minlen_rev(l, r-1, c, lab, vis, lun+1)
+			vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l, r+1, c)			
+	if (r + 1) < width:		
+		#ndx = calc_index(l, r+1, c)
+		ndx = lw2+rw+width+c 
+		#if (lab[ndx] == ' ' or lab[ndx] == 'o') and vis[ndx] == 0:
+		if lab[ndx] != '*' and vis[ndx] == 0:
+			vis[ndx] = 1
+			tmp = find_minlen_rev(l, r+1, c, lab, vis, lun+1)
+			vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l, r, c-1)						
+	if (c - 1) >= 0:		
+		#ndx = calc_index(l, r, c-1)
+		ndx = lw2+rw+c-1
+		#if (lab[ndx] == ' ' or lab[ndx] == 'o') and vis[ndx] == 0:
+		if lab[ndx] != '*' and vis[ndx] == 0:
+			vis[ndx] = 1
+			tmp = find_minlen_rev(l, r, c-1, lab, vis, lun+1)
+			vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l, r, c+1)			
+	if (c + 1) < width:
+		#ndx = calc_index(l, r, c+1)
+		ndx = lw2+rw+c+1
+		#if (lab[ndx] == ' ' or lab[ndx] == 'o') and vis[ndx] == 0:
+		if lab[ndx] != '*' and vis[ndx] == 0:
+			vis[ndx] = 1
+			tmp = find_minlen_rev(l, r, c+1, lab, vis, lun+1)
+			vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	# (l+1, r, c)
+	if (l + 1) < width:
+		#ndx = calc_index(l+1, r, c)
+		ndx = lw2+w2+rw+c
+		if lab[ndx] == 'o' and vis[ndx] == 0:
+			vis[ndx] = 1
+			tmp = find_minlen_rev(l+1, r, c, lab, vis, lun+1)
+			vis[ndx] = 0
+			if tmp < minl:
+				minl = tmp
+	return minl			
+	
+def dump_laby(lab):
+	global width
+	w2 = width*width
+	for i in xrange(width):
+		for j in xrange(width):
+			print lab[i*w2+j*width:i*w2+j*width+width]
+		print	
+			
+laby = []
+#test_cases = open(sys.argv[1], 'r')
+test_cases = open(argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ): # optional check
+		test = string.rstrip(test, '\r\n')
+		#test = rstrip(test, '\r\n')
+		# processing
+		s = test.split(';')
+		width = int(s[0])
+		w2 = width**2
+		w3 = width**3
+		laby = s[1]
+		# dump_laby(laby) # debug
+		# continue # debug
+		start_row = -1
+		start_col = -1
+		end_row = -1
+		end_col = -1
+		for i in xrange(width):
+			row = laby[i*width:i*width+width]
+			#print row # debug
+			if i == 0 or i == (width-1):
+				start_col = string.find(row, ' ')
+				#start_col = find(row, ' ')
+				if start_col >= 0:
+					start_row = i
+					break
+		for i in xrange(width):
+			row = laby[(width-1)*w2+i*width:(width-1)*w2+i*width+width]
+			# print row # debug
+			if i == 0 or i == (width-1):
+				end_col = string.find(row, ' ')
+				#end_col = find(row, ' ')
+				if end_col >= 0:
+					end_row = i
+					break
+		# print "---", start_row, start_col	# debug	
+		# print "---", end_row, end_col	# debug
+		if start_row < end_row:
+			rowdir = 1
+		else:
+			rowdir = -1
+		if start_col < end_col:
+			coldir = 1
+		else:
+			coldir = -1
+		v = [0 for i in xrange(w3)]
+		v[ calc_index(0, start_row, start_col) ] = 1
+		cc = context()	
+		cc.l = 0
+		cc.r = start_row
+		cc.c = start_col
+		cc.lab = laby
+		cc.vis = v
+		cc.lun = 1
+		find_minlen(0, start_row, start_col, laby, v, 1)
+		# v[ calc_index(width-1, end_row, end_col) ] = 1 # reverse
+		# find_minlen_rev(width-1, end_row, end_col, laby, v, 1) # reverse
+		#find_minlen2(cc)
+		if minlen == 1000000:
+			print 0
+		else:
+			print minlen
+		minlen = 1000000	
+test_cases.close()

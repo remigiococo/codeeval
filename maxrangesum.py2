@@ -1,0 +1,23 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(';')
+		n = int(s[0])
+		gs = s[1].split(' ')
+		g = [int(x) for x in gs if len(x) > 0]
+		# print g # debug
+		lg = len(g)
+		ms = min(g)
+		for i in xrange(lg-n+1):
+			s = sum( g[i:i+n] )
+			if s > ms:
+				ms = s
+		if ms > 0:		
+			print ms		
+		else:
+			print 0
+test_cases.close()

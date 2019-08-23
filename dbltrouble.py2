@@ -1,0 +1,28 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		lt = len(test)
+		if lt % 2 == 1:
+			print 0
+		else:
+			n = 1
+			nok = 0
+			for i in xrange(lt/2):
+				x = test[i]
+				y = test[i + lt/2]
+				if x == '*':
+					if y == '*':
+						n = n * 2
+				else:
+					if y == 'A' or y == 'B':
+						if x != y:
+							print 0
+							nok = 1
+							break
+			if nok == 0:				
+				print n			
+test_cases.close()

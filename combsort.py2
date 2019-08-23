@@ -1,0 +1,36 @@
+import sys
+import math
+
+def combsort(v, index=1.25):
+	ln = len(v)
+	rng = int( math.floor( float(ln) / index ) )
+	# print "rng", rng # debug
+	iter = 0
+	r = rng
+	sorted = 0
+	while sorted == 0:
+		xch = 0
+		for i in xrange(0, ln-r):
+			if v[i] > v[i+r]:
+				v[i], v[i+r] = v[i+r], v[i]
+				xch = xch + 1
+		iter = iter + 1
+		# print r, xch, v # debug		
+		if (r == 1) and (xch == 0):
+			sorted = 1
+		r = int( math.floor( float(r) / index ) )
+		if r < 1:
+			r = 1
+	return iter-1 # non si conta l'ultima con r=1 e v ordinato (?)
+
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split(' ')
+		n = [int(x) for x in s]
+		# print n # debug
+		print combsort(n)
+test_cases.close()

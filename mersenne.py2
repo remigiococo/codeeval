@@ -1,0 +1,37 @@
+import sys
+
+#mprimes = [3,7,31,127]
+
+def test_prime(x):
+	if (x % 2) == 0:
+		return False
+	flag = True
+	for i in xrange(3, x/2, 2):
+		if (x % i) == 0:
+			flag = False
+			break
+	return flag		
+
+mprimes = [3]	
+i = 2
+x = 3
+while x <= 4000:
+	x = (1<<i)-1
+	if test_prime(i) == True:
+		mprimes.append(x)
+	i	= i+1
+
+# print mprimes
+		
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		n = int(test)
+		oo = ""
+		for x in mprimes:
+			if x < n:
+				oo += str(x) + ", "
+		print oo[0:len(oo)-2]		
+test_cases.close()

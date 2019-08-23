@@ -1,0 +1,24 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		s = test.split(',')
+		l = len(s)
+		ln = [ 0 for i in xrange(101) ]
+		mn = 0
+		mi = -1
+		for i in s:
+			n = int(i)
+			ln[n] += 1
+			if ln[n] > mn:
+				mn = ln[n]
+				mi = n
+		#print ln # debug
+		if mn > l/2:
+			print mi
+		else:
+			print "None"
+test_cases.close()

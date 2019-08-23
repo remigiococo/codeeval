@@ -1,0 +1,61 @@
+import sys
+import string
+import re
+
+def test_hole(h,v):
+	hc = re.findall("[-]*[0-9]+", h)
+	vc = re.findall("[-]*[0-9]+", v)
+	#print "vc", vc #debug
+	hx = abs(int(hc[0])-int(hc[2]))
+	hy = abs(int(hc[1])-int(hc[3]))
+	vx = abs(int(vc[0])-int(vc[3]))
+	vy = abs(int(vc[1])-int(vc[4]))
+	vz = abs(int(vc[2])-int(vc[5]))
+	#print "hx, hy", hx, hy #debug
+	#print "vx, vy, vz", vx, vy, vz #debug
+	# vx, vy
+	if (vx <= hx) and (vy <= hy):
+		return True
+	if (vx <= hy) and (vy <= hx):
+		return True
+	# vx, vz	
+	if (vx <= hx) and (vz <= hy):
+		return True
+	if (vx <= hy) and (vz <= hx):
+		return True
+	# vy, vz	
+	if (vy <= hx) and (vz <= hy):
+		return True
+	if (vy <= hy) and (vz <= hx):
+		return True
+	return False
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = string.rstrip(test)
+	if( len(test) > 0 ):
+		# print test
+		s = test.split("|")
+		hole = re.search("\[.+\]", s[0]).group(0) #greedy
+		briks = re.findall("\(.+?\)", s[1])
+		#print "hole", hole #debug
+		#print "briks", briks #debug
+		oo = ''
+		lb = []
+		for i in xrange(len(briks)):
+			m = re.findall("[0-9]+", briks[i])
+			n = int( m[0] )
+			bv = re.search("\[.+\]",briks[i]).group(0)
+			#print n, bv #debug
+			if test_hole(hole, bv) == True:
+				lb.append(n)
+		lb = sorted(lb)		
+		for i in xrange(len(lb)):		
+			oo += str(lb[i]) + ','
+		lo = len(oo)		
+		if lo>0:
+			oo = oo[0:lo-1]
+		else:
+			oo = '-'
+		print oo
+test_cases.close()

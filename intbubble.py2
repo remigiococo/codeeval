@@ -1,0 +1,33 @@
+import sys
+import random
+
+def bubsort(v, n):
+	lv = len(v)
+	if n >= (lv-1):
+		v = v.sort()
+		return
+	for i in xrange(n):
+		for j in xrange(lv-1-i):
+			if v[j] > v[j+1]:
+				tmp = v[j]
+				v[j] = v[j+1]
+				v[j+1] = tmp
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split('|')
+		n = int( s[1].strip() )
+		s[0] = s[0].rstrip()
+		vs = s[0].split(' ')
+		# print vs # debug
+		v = [int(x) for x in vs]
+		bubsort(v, n)
+		# print v # debug
+		oo = ""
+		for x in v:
+			oo += str(x) + " "
+		print oo.rstrip()	
+test_cases.close()

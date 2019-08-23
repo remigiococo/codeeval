@@ -1,0 +1,54 @@
+import sys
+
+'''
+> - move to the next cell;
+< - move to the previous cell;
++ - increment the value in the current cell by 1;
+- - decrement the value of the current cell by 1;
+. - output the value of the current cell;
+, - input the value outside and store it in the current cell;
+[ - if the value of the current cell is zero, move forward on the text to the program to] taking into account nesting;
+] - if the value of the current cell is not zero, go back on the text of the program to [considering nesting; 
+'''
+
+def parse_code(s):
+	global ptr, cell, indent, ncells
+	crlf = "\n"
+	cmd = "global cell, ptr, ooo" + crlf
+	for c in s:
+		if c == ">":
+			cmd += " "*indent + "ptr+=1" + crlf
+			ncells += 1
+		elif c == "<":
+			cmd += " "*indent + "ptr-=1" + crlf
+		elif c == "+":
+			cmd += " "*indent + "cell[ptr] = (cell[ptr] + 1) % 256" + crlf
+		elif c == "-":
+			cmd += " "*indent + "cell[ptr] = (cell[ptr] - 1) % 256" + crlf
+		elif c == ".":
+			cmd += " "*indent + "ooo += chr(cell[ptr])" + crlf
+		elif c == ",":
+			continue # ??? no input ???
+		elif c == "[":
+			cmd += " "*indent + "while cell[ptr] != 0:" + crlf
+			indent += 1
+		elif c == "]":
+			indent -= 1
+	cmd += "print ooo" + crlf		
+	return cmd	
+
+cell = []
+ptr = 0
+indent = 0
+ncells = 1
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		code = parse_code(test)
+		# print code # debug
+		cell = [0 for i in xrange(ncells+1)]
+		ooo = ""
+		exec code
+test_cases.close()

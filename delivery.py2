@@ -1,0 +1,105 @@
+import sys
+import re
+import itertools
+
+def deliv(tn, tc, oi):
+	lst = []
+	lt = len(tn)
+	ndx = [0 for i in xrange(lt)]
+	fin = 0
+	minr = oi
+	ths = oi + minr
+	while fin == 0:
+		fincnt = 0
+		# computing
+		r = 0
+		flag = 0
+		for i in xrange(lt-1,-1,-1):
+			j = ndx[i]
+			if j == (tn[i] - 1):
+				fincnt += 1
+			if r < ths:	
+				r += j*tc[i]
+			else:
+				flag = 1
+		if flag != 1:
+			if r == oi:
+	 		 lst.append( [x for x in ndx] )
+			elif (r > oi) and ((r-oi) < minr):
+				minr = r-oi
+				ths = oi+minr
+		# increment	
+		for i in xrange(lt-1,-1,-1):		
+			ndx[i] = (ndx[i]+1)	% tn[i]
+			if ndx[i] > 0:
+				break
+		if fincnt == lt:
+			fin = 1
+	return lst, minr
+
+def deliv2(cur, resid, tn, tc, oi, lev, lst):
+	global minres, lta
+	#print cur, resid # debug	
+	if (lev == -1):
+		if (resid == 0):
+			lst.append([x for x in cur])
+			#cur[0] = 0
+			return
+		else:
+			if (resid < 0) and (-resid < minres):
+				minres = -resid
+		#cur[0] = 0		
+		return
+	maxn = 1+resid/tc[lev]
+	#print "maxn", maxn # debug
+	for i in xrange(maxn, -1, -1):
+		cur[lev] = i
+		res = resid - i*tc[lev]
+		deliv2(cur, res, tn, tc, oi, lev-1, lst)
+
+def lst2str(l):
+	oo = "["
+	for x in l: oo += str(x) + ","
+	return oo[0: len(oo)-1] + "]"
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		ta = []
+		oil = ''
+		m = re.search('\(.+\)', test)	
+		if m:
+			t1 = m.group(0)
+			ta = re.findall('[0-9]+', t1)
+		m = re.search('\), [0-9]+', test)	
+		if m:
+			o1 = m.group(0)
+			m2 = re.search('[0-9]+', o1)
+			if m2:
+				oil = m2.group(0)
+		#print ta, oil # debug
+		lta = len(ta)
+		tan = [int(x) for x in ta]
+		oiln = int(oil)
+		ln = []
+		tt = [ 1 + oiln/i for i in tan ]
+		# ---
+		#lll, minx = deliv(tt, tan, oiln)
+		lll = []
+		cc = [0 for i in xrange(lta)]
+		minres = oiln
+		maxn = 1+oiln/tan[lta-1]
+		for i in xrange(maxn,-1,-1):
+			cc[lta-1] = i
+			rr = oiln - i*tan[lta-1]
+			deliv2(cc, rr, tt, tan, oiln, lta-2, lll)
+		minx = minres	
+		if len(lll) > 0:
+			lll = sorted(lll)
+			oo = ""
+			for x in lll: oo += lst2str(x)
+			print oo
+		else:
+			print minx
+test_cases.close()

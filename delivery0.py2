@@ -1,0 +1,62 @@
+import sys
+import re
+import itertools
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		ta = []
+		oil = ''
+		m = re.search('\(.+\)', test)	
+		if m:
+			t1 = m.group(0)
+			ta = re.findall('[0-9]+', t1)
+		m = re.search('\), [0-9]+', test)	
+		if m:
+			o1 = m.group(0)
+			m2 = re.search('[0-9]+', o1)
+			if m2:
+				oil = m2.group(0)
+		#print ta, oil # debug
+		lta = len(ta)
+		tan = [int(x) for x in ta]
+		oiln = int(oil)
+		ln = []
+		tt = [ 1 + oiln/i for i in tan ]
+		tas = [ [tan[i]*j for j in xrange(tt[i])] for i in xrange(lta)]
+		#print "tt", tt, tuple(tt) # debug
+		expr = "itertools.product( "
+		for i in tt:
+		 expr += "range(" + str( i ) + "),"
+		expr = expr[0:len(expr)-1] + " )"
+		pt = eval(expr)
+		minr = oiln
+		ths = oiln + minr
+		for p in pt:
+			r = 0
+			flag = 0
+			# print p # debug
+			for j in xrange(lta-1,-1,-1):
+				# r += p[j] * int(ta[j])
+				#r += p[lta-1-j] * tan[lta-1-j]
+				r += tas[j][ p[j] ]
+				if r >= ths:
+					flag = 1
+					break
+			if flag == 1:
+				continue
+			if r == oiln:
+				ln.append( list(p) )
+			else:
+				if oiln < r:
+					if r-oiln < minr:
+						minr = r-oiln
+						ths = oiln+minr
+		if len(ln) > 0:
+			for l in ln:
+				print l,
+			print
+		else:
+			print minr	
+test_cases.close()

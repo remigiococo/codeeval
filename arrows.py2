@@ -1,0 +1,15 @@
+import sys
+import re
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		cnt = 0
+		for i in xrange(len(test)):
+			x = test[i:i+5]
+			if (x == ">>-->") or (x == "<--<<"):
+				cnt += 1
+		print cnt
+test_cases.close()

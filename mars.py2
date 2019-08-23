@@ -1,0 +1,52 @@
+import sys
+from math import ceil, sqrt
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(' ')
+		v = []
+		for x in s:
+			y = x.split(',')
+			v.append( (int(y[0]), int(y[1])) )
+		# print v # debug
+		nv = len(v)
+		d = []
+		for i in xrange(nv):
+			for j in xrange(i+1, nv):
+				dx = v[i][0] - v[j][0]
+				dx *= dx
+				dy = v[i][1] - v[j][1]
+				dy *= dy
+				#if (dx+dy) > 0:
+				d.append( (sqrt(dx+dy), i, j) ) # dist., v1, v2
+		d = sorted(d)		
+		# print d	# debug
+		ne = len(d)
+		par = [ set( [i] ) for i in xrange(nv) ]
+		totl = 0
+		tr = set()
+		for i in xrange(ne):
+			v1 = d[i][1]
+			v2 = d[i][2]
+			#if len( par[v1].intersection( par[v2] ) ) == 0:
+			s1 = -1
+			s2 = -1
+			for j in xrange( len(par) ):
+				if v1 in par[j]:
+					s1 = j
+				if v2 in par[j]:
+					s2 = j
+			if s1 != s2:		
+				par[s1] = par[s1].union( par[s2] )
+				del par[s2]
+				tr.add( (v1, v2) )
+				totl += d[i][0]
+			#if len(tr) == nv-1:
+			#	break
+		# print par # debug
+		# print tr # debug	
+		print int( ceil(totl) )
+test_cases.close()

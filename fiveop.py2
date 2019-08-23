@@ -1,0 +1,40 @@
+import sys
+import itertools
+
+ops = ['*', '+', '-']
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(' ')
+		n = [int(x) for x in s]
+		# print n # debug
+		p = itertools.permutations(n)
+		ok = 0
+		for pr in p:
+			curp = pr
+			# print curp # debug
+			#opp = itertools.product(ops, ops, ops, ops)
+			opp = itertools.product( range(3), range(3), range(3), range(3) )
+			for op in opp:
+				#ee = "(((("+curp[0]+op[0]+curp[1]+")"+op[1]+curp[2]+")"+op[2]+curp[3]+")"+op[3]+curp[4]+")"
+				#y = eval(ee)
+				y = curp[0]
+				for i in xrange(4):
+					if op[i] == 0: y = y * curp[i+1]
+					if op[i] == 1: y = y + curp[i+1]
+					if op[i] == 2: y = y - curp[i+1]
+				# print ee, y # debug
+				if y == 42:
+					# print "---", ee, y # debug
+					ok = 1
+					break
+			if ok == 1:
+				break
+		if ok == 1:
+			print "YES"
+		else:
+			print "NO"
+test_cases.close()

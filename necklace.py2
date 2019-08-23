@@ -1,0 +1,61 @@
+import sys
+import string
+
+def primes_until(x):
+	pr = set( [2] )
+	for i in xrange(3,x+1):
+		isp = 1
+		for j in pr:
+			if (i % j) == 0:
+				isp = 0
+		if isp == 1:
+			pr.add( i )
+	return pr		
+	
+def find_necklace(ln):
+	global n, pri, nck, sums
+	if (ln == n) and (nck[ln-1]+nck[0] in pri):
+		#print "---", nk
+		return 1
+	#for i in xrange(1+(cur%2), n+1, 2):
+	cnt = 0	
+	for i in sums[nck[ln-1]]:
+		if i not in nck:
+			nck[ln] = i
+			tmp = find_necklace(ln+1)
+			nck[ln] = 0
+			cnt = cnt + tmp
+	return cnt
+
+def find_necklace2(ln, val):
+	global n, pri, nckb, sums
+	if (ln == n) and (val+1 in pri):
+		return 1
+	cnt = 0	
+	for i in sums[val]:
+		if ( nckb & (1 << i) ) == 0:
+			nckb |= (1 << i)
+			tmp = find_necklace2(ln+1, i)
+			nckb &= (~(1 << i))
+			cnt = cnt + tmp
+	return cnt
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ): # optional check
+		test = string.rstrip(test, '\r\n')
+		# processing
+		n = int(test)
+		if n % 2 == 1:
+			print 0
+		#elif n == 18:
+		#	print 770144
+		else:
+			pri = primes_until(n*2)
+			sums = [ [j for j in xrange(1, n+1) if i+j in pri] for i in xrange(n+1)]
+			nck = [0 for i in xrange(n)]
+			nck[0] = 1
+			nckb = 2
+			#print find_necklace(1)
+			print find_necklace2(1,1)
+test_cases.close()

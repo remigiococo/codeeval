@@ -1,0 +1,27 @@
+import sys
+import string
+
+alfabeto=' !"#$%&\'()*+,-./0123456789:<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(';')
+		k = s[0]
+		m = s[1]
+		lk = len(k)
+		lm = len(m)
+		nr = lm/lk + 1
+		k2 = k * nr
+		k2 = k2[0:lm]
+		#print m
+		#print k2 # debug
+		dec = ""
+		for i in xrange(lm):
+			sh = int(k2[i])
+			pos = string.find(alfabeto, m[i])
+			dec += alfabeto[ (pos - sh) % len(alfabeto) ]
+		print dec	
+test_cases.close()

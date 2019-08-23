@@ -1,0 +1,148 @@
+import sys
+
+def m_compact(m, d):
+	global n
+	r = []
+	if d == "RIGHT":
+		for i in xrange(n):
+			tmp = [0 for j in xrange(n)]
+			k = n-1
+			for j in xrange(n-1,-1,-1):
+				if m[i][j] != 0:
+					tmp[k] = m[i][j]
+					k -= 1
+			r.append( tmp )		
+	elif d == "LEFT":	
+		for i in xrange(n):
+			tmp = [0 for j in xrange(n)]
+			k = 0
+			for j in xrange(n):
+				if m[i][j] != 0:
+					tmp[k] = m[i][j]
+					k += 1
+			r.append( tmp )		
+	elif d == "UP":
+		r = [ [0 for j in xrange(n)] for i in xrange(n)]
+		for j in xrange(n):
+			tmp = [0 for i in xrange(n)]
+			k = 0
+			for i in xrange(n):
+				if m[i][j] != 0:
+					tmp[k] = m[i][j]
+					k += 1
+			for i in xrange(n):		
+				r[i][j] = tmp[i]
+	elif d == "DOWN":	
+		r = [ [0 for j in xrange(n)] for i in xrange(n)]
+		for j in xrange(n):
+			tmp = [0 for i in xrange(n)]
+			k = n-1
+			for i in xrange(n-1,-1,-1):
+				if m[i][j] != 0:
+					tmp[k] = m[i][j]
+					k -= 1
+			for i in xrange(n):		
+				r[i][j] = tmp[i]
+	return r
+
+def m_merge(m, d):
+	global n
+	r = []
+	if d == "RIGHT":
+		for i in xrange(n):
+			tmp = [0 for j in xrange(n)]
+			k = n-1
+			prev = -1
+			for j in xrange(n-1,-1,-1):
+				if m[i][j] == prev:
+					k += 1
+					tmp[k] = m[i][j] + prev
+					prev = -1
+				else:
+					tmp[k] = m[i][j]
+					prev = m[i][j]	
+				k -= 1
+			r.append( tmp )		
+	elif d == "LEFT":	
+		for i in xrange(n):
+			tmp = [0 for j in xrange(n)]
+			k = 0
+			prev = -1
+			for j in xrange(n):
+				if m[i][j] == prev:
+					k -= 1
+					tmp[k] = m[i][j] + prev
+					prev = -1
+				else:
+					tmp[k] = m[i][j]
+					prev = m[i][j]	
+				k += 1
+			r.append( tmp )		
+	elif d == "UP":
+		r = [ [0 for j in xrange(n)] for i in xrange(n)]
+		for j in xrange(n):
+			tmp = [0 for i in xrange(n)]
+			k = 0
+			prev = -1
+			for i in xrange(n):
+				if m[i][j] == prev:
+					k -= 1
+					tmp[k] = m[i][j] + prev
+					prev = -1
+				else:	
+					tmp[k] = m[i][j]
+					prev = m[i][j]	
+				k += 1
+			for i in xrange(n):		
+				r[i][j] = tmp[i]
+	elif d == "DOWN":	
+		r = [ [0 for j in xrange(n)] for i in xrange(n)]
+		for j in xrange(n):
+			tmp = [0 for i in xrange(n)]
+			k = n-1
+			prev = -1
+			for i in xrange(n-1,-1,-1):
+				if m[i][j] == prev:
+					k += 1
+					tmp[k] = m[i][j] + prev
+					prev = -1
+				else:	
+					tmp[k] = m[i][j]
+					prev = m[i][j]	
+				k -= 1
+			for i in xrange(n):		
+				r[i][j] = tmp[i]
+	return r
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(';')
+		dir = s[0]
+		n = int(s[1])
+		rows = s[2].rstrip().split('|')
+		m = []
+		for x in rows:
+			y = x.lstrip().split(' ')
+			m.append( [ int(z) for z in y ] )
+		zc = 0
+		for i in xrange(n):	
+			zc += m[i].count(0)
+		# print dir, n, rows, m # debug
+		# print "zc", zc # debug
+		if zc == 0:
+			mm = m
+		else:	
+			mc = m_compact(m, dir)
+		# print mc # debug
+			mm = m_merge(mc, dir)
+		# print "---", mm # debug
+		oo = ""
+		for i in xrange(n):
+			for j in xrange(n):
+				oo += str(mm[i][j]) + " "
+			oo = oo[0:len(oo)-1] + "|"	
+		print	oo[0:len(oo)-1]
+test_cases.close()

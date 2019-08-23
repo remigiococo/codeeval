@@ -1,0 +1,27 @@
+import sys
+
+roman = { 'I':1, 'V':5, 'X':10, 'L':50, 'C':100, 'D':500, 'M':1000 }
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		l = len(test)
+		prev = 2000
+		prevx = 0
+		sum = 0
+		for i in xrange(0, l, 2):
+			a = int(test[i:i+1])
+			r = roman[test[i+1:i+2]]
+			x = a*r
+			# print a, r # debug
+			if r > prev:
+				sum -= prevx
+			else:
+				sum += prevx
+			prev = r
+			prevx = x
+		sum += prevx	
+		print sum		
+test_cases.close()
