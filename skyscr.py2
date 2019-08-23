@@ -1,0 +1,44 @@
+import sys
+import re
+
+
+#
+# The output must describe the drawing line as a vector (X1,H1,X2,H2,X3,H3,X3,Xn-1,Hn-1,Xn) where X
+# is a x-coordinate of a point where the line is changing its direction from horizontal to vertical, and H
+# is a height of the vertical line. You're drawing continuously by starting at the bottom of the first left
+# building and finishing at the bottom of the right building.
+#
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip('\n')
+	if( len(test) > 0 ):
+		# print test
+		s = re.findall("\([0-9,]+\)", test) # triple L,H,R
+		ls = len(s)
+		#print s, len(s) # debug
+		maxx = 0
+		minx = 100000
+		pl = [[] for i in xrange(ls)]
+		for i in xrange(ls):
+			ps = re.findall("[0-9]+", s[i])
+			pl[i] = [int(x) for x in ps]
+			# print pl[i] # debug
+			if pl[i][2] > maxx:
+				maxx = pl[i][2]
+			if pl[i][0] < minx:
+				minx = pl[i][0]
+		# print minx, maxx # debug		
+		zbuf = [0 for i in xrange(maxx+1)]
+		for i in xrange(ls):
+			for j in xrange(pl[i][0], pl[i][2]): # R+1 ?
+				if pl[i][1] > zbuf[j]:
+					zbuf[j] = pl[i][1]
+		# print zbuf # debug
+		zprev = 0
+		for i in xrange(maxx):
+			if zbuf[i] != zprev:
+				print i, zbuf[i],
+			zprev = zbuf[i]	
+		print maxx, 0		
+test_cases.close()

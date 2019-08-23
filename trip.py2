@@ -1,0 +1,23 @@
+import sys
+import string
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = string.rstrip(test)
+	if( len(test) > 0 ):
+		# print test
+		s = test.split(";")
+		dist = []
+		for i in xrange(len(s)):
+			if len(s[i]) > 0:
+				s1 = s[i].split(",")
+				d = int( s1[1] )
+				dist.append(d)
+		dist = sorted(dist)
+		oo = str( dist[0] ) + ','
+		for i in xrange(1, len(dist)):
+			oo += str( dist[i] - dist[i-1] )
+			if i < len(dist)-1:
+				oo += ','
+		print oo		
+test_cases.close()

@@ -1,0 +1,21 @@
+import sys
+import string
+ 
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test=test.rstrip()
+		i = 0
+		ost = ''
+		for c in test:
+			if c in string.ascii_letters:
+				if (i%2)==0:
+					ost += c.upper()
+				else:
+					ost += c.lower()
+				i += 1
+			else:
+				ost += c
+		print ost		
+test_cases.close()

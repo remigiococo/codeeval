@@ -1,0 +1,23 @@
+import sys
+import re
+import math
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = re.findall('[-]*[0-9]+', test)
+		n2 = len(s)
+		n = int( math.sqrt(n2) )
+		cols = [ [int(s[i+n*j]) for j in xrange(n)] for i in xrange(n)]
+		# print cols #debug
+		cols = sorted(cols)
+		oo = ""
+		for i in xrange(n):
+			for j in xrange(n):
+				oo += str( cols[j][i] ) + " "
+			oo += "| "	
+		oo = oo[0: len(oo)-2]
+		print oo	
+test_cases.close()

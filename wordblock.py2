@@ -1,0 +1,37 @@
+import sys
+
+def match_word(cur, w, lst, v, n):
+	if cur == len(w)-1:
+		for i in xrange(n):
+			if v[i] == 0:
+				if w[cur] in lst[i]:
+					return 1
+	ret = 0				
+	for i in xrange(n):
+		if v[i] == 0:
+			if w[cur] in lst[i]:
+				v[i] = 1
+				ret = match_word(cur+1, w, lst, v, n)
+				v[i] = 0
+				if ret == 1:
+					return 1
+	return ret
+
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split('|')
+		n = int(s[0])
+		w = s[1].strip()
+		b = s[2].strip().split(' ')
+		#print n, w, b # debug
+		vis = [0 for i in xrange(n)]
+		r = match_word(0, w, b, vis, n)
+		if r == 1:
+			print 'True'
+		else:	
+			print 'False'
+test_cases.close()

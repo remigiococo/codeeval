@@ -1,0 +1,24 @@
+import sys
+
+'''
+a | b | c | d | e | f | g | h | i | j | k | l | m
+u | v | w | x | y | z | n | o | p | q | r | s | t 
+'''
+
+deco = { 'a':'u', 'b':'v', 'c':'w', 'd':'x', 'e':'y',
+	'f':'z', 'g':'n', 'h':'o', 'i':'p', 'j':'q',
+	'k':'r', 'l':'s', 'm':'t', 'u':'a', 'v':'b',
+	'w':'c', 'x':'d', 'y':'e', 'z':'f', 'n':'g',
+	'o':'h', 'p':'i', 'q':'j', 'r':'k', 's':'l',
+	't':'m' }
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		oo = ""
+		for x in test:
+			oo += deco[x]
+		print oo	
+test_cases.close()

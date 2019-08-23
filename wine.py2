@@ -1,0 +1,31 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split('|')
+		w = s[0].strip().split(' ')
+		let = s[1].strip()
+		#print w, let # debug
+		oo = ""	
+		for x in w:
+			y = x.strip()
+			# print y # debug
+			flag = 1
+			for z in let:
+				# print "---", z # debug
+				if z not in y:
+					flag = 0
+					break
+				else:
+					y = y.replace(z, '', 1)
+			if flag == 1:
+				oo += x.strip() + " "
+		ll = len(oo)					
+		if ll > 0:	
+			print oo[0:ll-1]
+		else:
+			print "False"
+test_cases.close()

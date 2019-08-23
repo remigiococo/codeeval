@@ -1,0 +1,14 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		s = test.split(',')
+		# print s # debug
+		oo = s[0]
+		for c in s[1].strip():
+			oo = oo.replace(str(c), "")
+		print oo	
+test_cases.close()

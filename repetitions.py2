@@ -1,0 +1,26 @@
+import sys
+import re
+
+def comparex(a,b):
+	if len(a) > len(b):
+		return -1
+	elif len(b) > len(a):
+		return 1
+	else:
+		return 0
+		
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		mm = re.finditer('(.)\\1{1,}', test)
+		oo = test
+		lm = [x.group(0) for x in mm]
+		lm = sorted(lm, cmp=comparex)
+		#print lm # debug
+		for x in lm:
+			#print x.group(0) # debug
+			oo = oo.replace(x, x[0:1])
+		print oo.rstrip()
+test_cases.close()

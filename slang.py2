@@ -1,0 +1,35 @@
+import sys
+
+slist = [
+    ", yeah!",
+    ", this is crazy, I tell ya.",
+    ", can U believe this?",
+    ", eh?",
+    ", aw yea.",
+    ", yo.",
+    "? No way!",
+    ". Awesome!"
+]
+
+test_cases = open(sys.argv[1], 'r')
+cnt = 0
+cntm = 0
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		lt = len(test)
+		oo = ""
+		for i in xrange(lt):
+			if (test[i:i+1] == ".") or (test[i:i+1] == "?") or (test[i:i+1] == "!"):
+				if cntm %2 == 1:
+					oo += slist[cnt]
+					cnt += 1
+					cnt = (cnt % len(slist))
+				else:	
+					oo += test[i:i+1]
+				cntm += 1	
+			else:
+				oo += test[i:i+1]
+		print oo		
+test_cases.close()

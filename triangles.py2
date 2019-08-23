@@ -1,0 +1,43 @@
+import sys
+import itertools
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(';')
+		s1 = s[0].rstrip().split(' ')
+		v = int(s1[0])
+		e = int(s1[1])
+		# print v, e # debug
+		s2 = s[1].rstrip().split(',')
+		edg = []
+		for x in s2:
+			y = x.split(' ')
+			v1 = int(y[0])
+			v2 = int(y[1])
+			if v1 < v2:
+				ed = (v1, v2)
+			elif v2 < v1:
+				ed = (v2, v1)
+			else:
+				continue # v1 == v2
+			if ed not in edg:
+				edg.append( ed )
+		#print edg # debug
+		alltri = [x for x in itertools.combinations( range(v), 3 )]
+		tottri = len(alltri)
+		cnt = [0 for i in xrange(tottri)]
+		for i in xrange( len(edg) ):
+			v1 = edg[i][0]
+			v2 = edg[i][1]
+			for j in xrange( tottri ):
+				if (v1 in alltri[j]) and (v2 in alltri[j]):
+					cnt[j] = cnt[j] + 1
+		ntri = 0
+		for x in cnt:
+			if x == 3:
+				ntri += 1
+		print ntri		
+test_cases.close()

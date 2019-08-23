@@ -1,0 +1,14 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(' ')
+		s.sort(reverse=True)
+		oo = ''
+		for x in s:
+			oo += x + ' '
+		print oo [0:len(oo)-1]	
+test_cases.close()

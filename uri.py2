@@ -1,0 +1,44 @@
+import sys
+import urlparse
+import urllib
+
+#1. A port that is empty or not given is equivalent to the default port of 80
+#2. Comparisons of host names MUST be case-insensitive
+#3. Comparisons of scheme names MUST be case-insensitive
+#4. Characters are equivalent to their % HEX HEX encodings. (Other than typical reserved characters in urls like , / ? : @ & = + $ #)
+
+def comp_uri(a,b):
+	t1 = urlparse.urlparse(a)
+	t2 = urlparse.urlparse(b)
+	#print t1, t2 # debug
+	if t1.scheme.lower() != t2.scheme.lower():
+		return 0
+	p1 = t1.netloc.replace(":80", "")
+	p2 = t2.netloc.replace(":80", "")
+	#print p1, p2 # debug
+	if p1.lower() != p2.lower():
+		return 0
+	p1 = urllib.unquote(t1.path)
+	p2 = urllib.unquote(t2.path)
+	#print p1, p2 # debug
+	if p1.lower() != p2.lower():
+		return 0
+	if t1.params.lower() != t2.params.lower():
+		return 0
+	if t1.query.lower() != t2.query.lower():
+		return 0
+	if t1.fragment.lower() != t2.fragment.lower():
+		return 0
+	return 1
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		v = test.split(';')
+		if comp_uri(v[0], v[1]) == 1:
+			print 'True'
+		else:
+			print 'False'
+test_cases.close()

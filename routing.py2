@@ -1,0 +1,143 @@
+import sys
+import re
+import pprint # debug
+
+def conv_ip( ip ):
+	ip = ip[1:len(ip)-1]
+	s = ip.split('/')
+	sh = int( s[1] )
+	shc = 32 - sh
+	mask = ((1 << sh) - 1) << shc
+	ss = s[0].split('.')
+	ad = 0
+	for x in ss:
+		ad <<= 8
+		ad += int(x)
+	return ad, mask
+
+def subnet( ip ):
+	a, m = conv_ip(ip)
+	return a & m
+	
+def ip_same_subnet( ip1, ip2 ):
+	ad1, mask1 = conv_ip(ip1)
+	ad2, mask2 = conv_ip(ip2)
+	if (ad1 & mask1) == (ad2 & mask2):
+		return 1
+	return 0
+
+def find_shortest(n1, n2, cl, vis, lev):
+	global pl, tmpl, gmin
+	if lev > gmin:
+		return lev
+	if n2 in cl[n1]:
+		tmpl.append(n2)
+		pl.append(tmpl)
+		return
+	lt = len(tmpl)
+	for x in cl[n1]:
+		if vis[x] == 0:
+			vis[x] = 1
+			tmpl.append(x)
+			find_shortest(x, n2, cl, vis, lev+1)
+			vis[x] = 0
+			tmpl = tmpl[0:lt]
+
+def find_shortest2(n1, n2, cl):
+	global gmin, nh
+	q = [n1]
+	visi = [0 for i in xrange(nh)]
+	visi[n1] = 1
+	vl = [0 for i in xrange(nh)]
+	vl[n1] = 1
+	while len(q) > 0:
+		cur = q[0]
+		q = q[1:] # dequeue
+		#print "---", cur
+		if cur == n2:
+			# print "***", vl[n2] # debug
+			if vl[n2] < gmin:
+				gmin = vl[n2]
+		cnt = 0
+		for x in cl[cur]:
+			if visi[x] == 0:
+				visi[x] = 1
+				q.append(x)
+				vl[x] = vl[cur]+1
+		#if cnt == 0:
+		#	vs.remove(cur)
+	return gmin
+				
+	
+test_cases = open(sys.argv[1], 'r')
+ips = 0
+# hl = dict()
+snl = dict()
+nh = 0
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test=test.rstrip()
+		if ips == 0:
+			#ad = re.findall('[0-9]+: \[.+?\]', test)
+			ad = re.findall('[0-9]+: \[.*?\]', test)
+			# pprint.pprint( ad ) # debug
+			for x in ad:
+				hs = re.search('[0-9]+: ', x).group(0)
+				hs = hs[0:len(hs)-2]
+				host = int(hs)
+				# print host # debug
+				addr = re.findall('\'[0-9\.\/]+\'', x)
+				# pprint.pprint( addr ) # debug
+				# hl[host] = addr
+				snl[host] = set( [ subnet(x) for x in addr ] )
+			# pprint.pprint( hl ) # debug
+			# pprint.pprint( snl ) # debug
+			# nh = len(snl)
+			nh = max( snl.keys() ) + 1
+			conl = [ [] for i in xrange(nh) ]
+			for i in xrange(nh):
+				if i not in snl.keys():
+					continue
+				for j in xrange(i+1,nh):
+					if j not in snl.keys():
+						continue
+					if len( snl[i].intersection(snl[j]) ) > 0:
+						conl[i].append(j)
+						conl[j].append(i)
+			# pprint.pprint( conl ) # debug			
+			ips=1
+		else:
+			s = test.split(' ')
+			n1 = int(s[0])
+			n2 = int(s[1])
+			# print n1, n2 # debug
+			v = [0 for i in xrange(nh)]
+			pl = []
+			tmpl = [n1]
+			v[n1] = 1
+			gmin = 1000000
+			if (n1 > nh-1) or (n2 > nh-1) or (len( conl[n2] ) == 0):
+				sp = 1000000
+			else:	
+				find_shortest2(n1, n2, conl)	
+				if gmin != 1000000:
+					find_shortest(n1, n2, conl, v, 2)
+				sp = gmin
+			# print sp # debug
+			if sp == 1000000:
+				print "No connection"
+			else:	
+				ol = []
+				for x in sorted(pl):
+					if len(x) == sp:
+						ol.append(x)
+				oo = ""
+				for x in ol:
+					oo += "["
+					for y in x:
+						oo += str(y) + ", "
+					oo = oo[0:len(oo)-2] + "], "
+				print oo[0:len(oo)-2]	
+			# print ol # debug		
+test_cases.close()

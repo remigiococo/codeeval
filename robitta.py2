@@ -1,0 +1,44 @@
+import sys
+
+moves = { 'R':(1,0), 'D':(0,-1), 'L':(-1,0), 'U':(0,1) }
+dirs = ['R','D','L','U']
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split('|')
+		dims = s[0].strip().split('x')
+		w = int(dims[0])
+		h = int(dims[1])
+		st = s[1].strip().split(' ')
+		x0 = int(st[0])
+		y0 = int(st[1])
+		# print w, h, x0, y0 # debug
+		curdir = 0
+		x = 1
+		y = h
+		nuts = [ [0 for j in xrange(h)] for i in xrange(w)]
+		cnt = 1
+		while True:
+			# print x, y # debug
+			nuts[x-1][y-1] = 1
+			if (x == x0) and (y == y0):
+				break
+			nx = x+moves[dirs[curdir]][0]
+			ny = y+moves[dirs[curdir]][1]
+			chgdir = 0
+			if (nx > w) or (nx < 0) or (ny > h) or (ny < 0):
+				chgdir = 1
+			elif nuts[nx-1][ny-1] == 1:
+				chgdir = 1
+			if chgdir == 1:
+				curdir = (curdir+1)%4
+				nx = x+moves[dirs[curdir]][0]
+				ny = y+moves[dirs[curdir]][1]
+			x = nx
+			y = ny
+			cnt += 1
+		print cnt	
+test_cases.close()

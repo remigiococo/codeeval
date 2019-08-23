@@ -1,0 +1,23 @@
+import sys
+import re
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		s=test.split(' ')
+		# print s # debug
+		x=re.findall('[a-z]+', s[1])
+		# print x # debug
+		n = []
+		j=0
+		for i in x:
+			ln=len(i)
+			n.append(s[0][j:j+ln])
+			j += ln
+		# print n # debug
+		for j in xrange( len(x) ):
+			s[1] = s[1].replace(x[j], n[j])
+		# print s[1] # debug	
+		print eval(s[1])		
+test_cases.close()

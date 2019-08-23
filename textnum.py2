@@ -1,0 +1,51 @@
+import sys
+import string
+
+units = { 'zero':0, 'one':1, 'two':2,  'three':3, 'four':4, 'five':5, 'six':6, 'seven':7, 'eight':8, 'nine':9 }
+deca1 = { 'ten':10, 'eleven':11, 'twelve':12, 'thirteen':13, 'fourteen':14, 
+				  'fifteen':15, 'sixteen':16, 'seventeen':17, 'eighteen':18, 'nineteen':19  }
+deca = { 'twenty':20,  'thirty':30, 'forty':40, 'fifty':50, 'sixty':60, 'seventy':70, 'eighty':80, 'ninety':90 }
+groups = { 'million':1000000, 'thousand':1000 }				 
+ 
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ): # optional check
+		test = string.rstrip(test, '\r\n')
+		n = string.split(test, ' ')
+		num = 0
+		sign = 1
+		group = 0
+		prevu = 0
+		prevd = 0
+		prevh = 0
+		ln = len(n)
+		for i in xrange(ln):
+			x = n[i]
+			if x == 'negative':
+				sign = -1
+			elif x in units:
+				prevu = units[x]
+			elif x in deca1:
+				prevd = deca1[x]
+			elif x in deca:
+				prevd = deca[x]
+			elif x == 'hundred':
+				prevh = prevu * 100
+				prevu = 0	
+			elif x in groups:
+				group += prevu + prevd + prevh
+				group *= groups[x]
+				num += group
+				group = 0
+				prevu = 0
+				prevd = 0
+				prevh = 0
+			if i == (ln-1):
+				group += prevu + prevd + prevh			
+				num += group
+				group = 0
+				prevu = 0
+				prevd = 0
+				prevh = 0
+		print num * sign		
+test_cases.close()

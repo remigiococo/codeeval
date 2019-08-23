@@ -1,0 +1,49 @@
+import sys
+import re
+
+def search_seat(vis, lev):
+	global n, ld
+	if lev == n+1:
+		return 1
+	for x in ld[lev]:
+		if vis[x] == 0:
+			# print "-"*lev, x # debug
+			vis[x] = 1
+			tmp = search_seat(vis, lev+1)
+			vis[x] = 0
+			if tmp == 1:
+				return 1
+	return 0
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(';')
+		n = int(s[0])
+		t = re.findall( '[0-9]+:\[[0-9, ]+\]', s[1].rstrip() )
+		#ld = dict()
+		ld = [ [] for i in xrange(n+1) ]
+		sd = set()
+		for x in t:
+			y = x.rstrip().split(':')
+			p = re.findall( '[0-9]+', y[1].rstrip() )
+			ld[ int(y[0]) ] = [int(z) for z in p]
+			for z in p: sd.add( int(z) )
+		# print ld # debug
+		if len(sd) < n:
+			print "No"
+		else:	
+			v = [0 for i in xrange(n+1)]
+			for i in ld[1]:
+				v[i] = 1
+				d	= search_seat(v, 2)
+				v[i] = 0
+				if d == 1:
+					break
+			if d == 1:
+				print "Yes"
+			else:
+				print "No"
+test_cases.close()

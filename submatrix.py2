@@ -1,0 +1,31 @@
+import sys
+
+mat = []
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.rstrip()
+		s = test.split(' ')
+		tmp = [int(x) for x in s]
+		mat.append(tmp)
+test_cases.close()
+
+def calc_sum(a,b,c,d,m):
+	s = 0
+	for i in xrange(a,c+1):
+		s += sum(m[i][b:d+1])
+	return s
+	
+n = len(mat)
+m = len(mat[0])
+maxs = 0
+for i in xrange(n):
+	for j in xrange(m):
+		for k in xrange(i,n):
+			for l in xrange(j,m):
+				s = calc_sum(i,j,k,l,mat)
+				if s > maxs:
+					maxs = s
+print maxs					

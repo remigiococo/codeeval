@@ -1,0 +1,69 @@
+import sys
+
+month = { 'Jan':0, 'Feb':1, 'Mar':2, 'Apr':3,
+	'May':4, 'Jun':5, 'Jul':6, 'Aug':7,
+	'Sep':8, 'Oct':9, 'Nov':10, 'Dec':11 }
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		rng = []
+		rl = test.split(';')
+		for r in rl:
+			pl = r.split('-')
+			d1 = pl[0].strip().split(' ')
+			d2 = pl[1].strip().split(' ')
+			#print d1, d2 # debug
+			# tenere conto di possibili overlap
+			# data min: Jan 1990
+			y1 = int(d1[1])-1990
+			y2 = int(d2[1])-1990
+			mo1 = month[d1[0]] + y1 * 12
+			mo2 = month[d2[0]] + y2 * 12
+			rng.append( (mo1, mo2) )
+		#print rng	# debug
+		rng2 = set()
+		lrng = len(rng)
+		for i in xrange( lrng ):
+			merge = 0
+			for j in xrange( lrng ):
+				if i == j:
+					continue
+				#    i0   i1
+				# j0   j1
+				if ( rng[i][0] >= rng[j][0] ) and ( rng[i][1] >= rng[j][1] ) and ( rng[i][0] <= rng[j][1] ):
+					#rng2.add( (rng[j][0], rng[i][1]) )
+					rng[j] = ( rng[j][0], rng[i][1] )
+					rng[i] = rng[j]
+					merge = 1
+				#    i0   i1
+				# j0          j1
+				elif ( rng[i][0] >= rng[j][0] ) and ( rng[i][1] <= rng[j][1] ):
+					#rng2.add( rng[j] )
+					rng[i] = rng[j]
+					merge = 1
+				# i0          i1
+				#    j0   j1
+				elif ( rng[i][0] <= rng[j][0] ) and ( rng[i][1] >= rng[j][1] ):
+					#rng2.add( rng[i] )
+					rng[j] = rng[i]
+					merge = 1
+				# i0   i1
+				#    j0   j1
+				elif ( rng[i][0] <= rng[j][0] ) and ( rng[i][1] <= rng[j][1] ) and ( rng[i][1] >= rng[j][0] ):
+					#rng2.add( (rng[i][0], rng[j][1]) )
+					rng[j] = ( rng[i][0], rng[j][1] )
+					rng[i] = rng[j]
+					merge = 1
+			#if merge == 0:
+				#rng2.add( rng[i] )
+		for x in rng:
+			rng2.add( x )
+		#print rng2 # debug
+		m = 0		
+		y = 0		
+		for x in rng2:
+			m += (x[1] - x[0] + 1)
+		print m/12			
+test_cases.close()

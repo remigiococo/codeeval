@@ -1,0 +1,40 @@
+import sys
+import string
+
+def winner(v, t):
+	c1 = v[0]
+	c2 = v[1]
+	su1 = c1[len(c1)-1:]
+	su2 = c2[len(c2)-1:]
+	va1 = c1[0:len(c1)-1]
+	va2 = c2[0:len(c2)-1]
+	highranks = "JQKA"
+	if va1 in highranks:
+		n1 = string.find(highranks,va1)+11
+	else:
+		n1 = int(va1)
+	if va2 in highranks:
+		n2 = string.find(highranks,va2)+11
+	else:
+		n2 = int(va2)
+	if (n1 == n2)	and not( (su1 == t) or (su2 == t) ):
+	#if (n1 == n2):
+		return v[0] + " " + v[1]
+	w = v[0]
+	if (su2 == t) and (su1 != t):
+		w = v[1]
+	elif (n2 > n1) and ( (su1 != t) or (su1 == su2) ):
+		w = v[1]
+	return w	
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split('|')
+		tr = s[1].strip()
+		cl = s[0].strip().split(' ')
+		#print cl, tr # debug
+		print winner(cl, tr)
+test_cases.close()

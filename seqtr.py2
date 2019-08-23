@@ -1,0 +1,55 @@
+import sys
+import re
+
+def check_seq(g, s):
+	#print g, s # debug
+	lg = len(g)
+	ls = len(s)
+	if lg == 0 or ls == 0:
+		return 'No'
+	if s[0:1] == "B" and g[0:1] == "0":
+		return 'No'
+	if ls == 1:
+		if lg == 1:
+			return 'Yes'
+		else:
+			return 'No'
+	r = 'No'
+	if s[1:2] == s[0:1]:		
+		#print "more input" # debug		
+		r = check_seq(g, s[1:])
+		if r == 'No':
+			#print "more g+i" # debug
+			r = check_seq(g[1:], s[1:])
+	else:
+		#print "more g+i" # debug
+		r = check_seq(g[1:], s[1:])
+	return r	
+	
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test=test.rstrip()
+		v = test.split(' ')
+		#print check_seq(v[0], v[1])
+		if v[1][0:1] == "B" and v[0][0:1] == "0":
+			print 'No'
+		else:	
+			oseq = re.findall('1+', v[0])
+			bseq = re.findall('B+', v[1])
+			lb = len(bseq)
+			lo = len(oseq)
+			if lb > lo:
+				print 'No'
+			elif lb == lo:
+				if v[1][0:1] == "A":
+					if v[0][0:1] == "0":
+						print 'Yes'
+				else:
+					print '?'
+			else:	
+				#print oseq
+				#print bseq
+				print '?'
+test_cases.close()

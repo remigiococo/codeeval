@@ -1,0 +1,22 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	test = test.rstrip()
+	if( len(test) > 0 ):
+		# print test
+		if( len(test) <= 55 ):
+			print test
+		else:
+			st = test[0:40]
+			# print "st: ", st # debug
+			if ' ' not in st:
+				print st + "... <Read More>"
+			else:
+				i = 39
+				while (test[i:i+1] != " ") and (i >= 0):
+					i -= 1
+				if i > 0:	
+					st = test[0:i]	
+				print st + "... <Read More>"	
+test_cases.close()

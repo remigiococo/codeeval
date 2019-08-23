@@ -1,0 +1,25 @@
+import sys
+
+test_cases = open(sys.argv[1], 'r')
+for test in test_cases:
+	if( len(test) > 0 ):
+		# print test
+		test = test.strip()
+		s = test.split('|')
+		x = s[0].strip()
+		y = s[1].strip()
+		cnt = 0	
+		for i in xrange(len(x)):
+			if x[i] != y[i]:
+				cnt = cnt + 1
+		if cnt == 0:		
+			print "Done"
+		elif cnt <= 2:
+			print "Low"
+		elif cnt <= 4:
+			print "Medium"
+		elif cnt <= 6:
+			print "High"
+		else:
+			print "Critical"
+test_cases.close()
